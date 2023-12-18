@@ -1,32 +1,43 @@
 import {createElement} from '../render.js';
+import {humanizeTaskDueDate, getTimeDifference} from '../utils.js';
+import {DATE_FORMAT} from '../const.js';
 
-function createWayPointView () {
+function createOfferEventTemplate({title, price}) {
+  return (
+    `<li class="event__offer">
+      <span class="event__offer-title">${title}</span>
+      &plus;&euro;&nbsp;
+      <span class="event__offer-price">${price}</span>
+    </li>`
+  );
+}
+
+function createWayPointView (eventPoint, destination, offers) {
+  const {basePrice, type, dateFrom, dateTo} = eventPoint;
+  const {name} = destination;
+
   return (
     `<li class="trip-events__item">
       <div class="event">
-        <time class="event__date" datetime="2019-03-18">MAR 18</time>
+        <time class="event__date" datetime="${humanizeTaskDueDate(dateFrom, DATE_FORMAT.date)}">${humanizeTaskDueDate(dateFrom, DATE_FORMAT.month)}</time>
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/taxi.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">Taxi Amsterdam</h3>
+        <h3 class="event__title">${type} ${name}</h3>
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
+            <time class="event__start-time" datetime="${dateFrom}">${humanizeTaskDueDate(dateFrom, DATE_FORMAT.hours)}</time>
             &mdash;
-            <time class="event__end-time" datetime="2019-03-18T11:00">11:00</time>
+            <time class="event__end-time" datetime="${dateTo}">${humanizeTaskDueDate(dateTo, DATE_FORMAT.hours)}</time>
           </p>
-          <p class="event__duration">30M</p>
+          <p class="event__duration">${getTimeDifference(dateFrom, dateTo)}</p>
         </div>
         <p class="event__price">
-          &euro;&nbsp;<span class="event__price-value">20</span>
+          &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          <li class="event__offer">
-            <span class="event__offer-title">Order Uber</span>
-            &plus;&euro;&nbsp;
-            <span class="event__offer-price">20</span>
-          </li>
+          ${offers.map((offer) => createOfferEventTemplate(offer)).join('')}
         </ul>
         <button class="event__favorite-btn event__favorite-btn--active" type="button">
           <span class="visually-hidden">Add to favorite</span>
@@ -43,8 +54,14 @@ function createWayPointView () {
 }
 
 export default class WayPointView {
+  constructor({eventPoint, destination, offers}) {
+    this.eventPoint = eventPoint;
+    this.destination = destination;
+    this.offers = offers;
+  }
+
   getTemplate() {
-    return createWayPointView();
+    return createWayPointView(this.eventPoint, this.destination, this.offers);
   }
 
   getElement() {
