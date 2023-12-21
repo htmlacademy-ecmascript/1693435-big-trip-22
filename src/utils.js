@@ -14,15 +14,27 @@ function humanizeTaskDueDate(dueDate, format) {
 }
 
 function getTimeDifference(start, end) {
-  const difference = dayjs(end).diff(start) / SEC_IN_MINUTES;
+  const durationInMinutes = dayjs(end).diff(start, 'minute');
 
-  if (difference < SEC_IN_MINUTES) {
-    return dayjs(difference).format('mm[M]');
-  } else if (difference > SEC_IN_MINUTES && difference < SEC_IN_MINUTES * HOUR_IN_A_DAY) {
-    return dayjs(difference).format('HH[H] mm[M]');
-  } else {
-    return dayjs(difference).format('DD[D] HH[H] mm[M]');
+  const days = Math.floor(durationInMinutes / (HOUR_IN_A_DAY * SEC_IN_MINUTES));
+  const hours = Math.floor((durationInMinutes % (HOUR_IN_A_DAY * SEC_IN_MINUTES)) / SEC_IN_MINUTES);
+  const minutes = durationInMinutes % SEC_IN_MINUTES;
+
+  let durationString = '';
+
+  if (days > 0) {
+    durationString += `${days}D `;
   }
+
+  if (hours > 0) {
+    durationString += `${hours}H `;
+  }
+
+  if (minutes > 0 || (days === 0 && hours === 0)) {
+    durationString += `${minutes}M `;
+  }
+
+  return durationString;
 }
 
 export {getRandomArrayElement, getRandomInteger, humanizeTaskDueDate, getTimeDifference};

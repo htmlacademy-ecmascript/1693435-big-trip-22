@@ -1,4 +1,5 @@
 const SEC_IN_MINUTES = 60;
+const MILISEC_IN_HOUR = SEC_IN_MINUTES * SEC_IN_MINUTES * SEC_IN_MINUTES;
 const HOUR_IN_A_DAY = 24;
 const PICTURE_URL = 'https://loremflickr.com/248/152?random=';
 
@@ -45,4 +46,4 @@ function сapitalizeTheFirstLetter(word) {
   return word[0].toUpperCase() + word.slice(1);
 }
 
-export {SEC_IN_MINUTES, HOUR_IN_A_DAY, PICTURE_URL, DATE_FORMAT, POINT_TYPES, DESCRIPTIONS, getDefaultPoint, сapitalizeTheFirstLetter};
+export {SEC_IN_MINUTES, MILISEC_IN_HOUR, HOUR_IN_A_DAY, PICTURE_URL, DATE_FORMAT, POINT_TYPES, DESCRIPTIONS, getDefaultPoint, сapitalizeTheFirstLetter};
