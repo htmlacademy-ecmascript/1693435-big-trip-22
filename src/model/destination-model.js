@@ -1,15 +1,15 @@
 import {destinations} from '../mock/destinations.js';
 
 export default class DestinationsModel {
-  destinations = destinations;
+  #destinations = destinations;
 
-  getDestinations() {
-    return this.destinations;
+  get destinations() {
+    return this.#destinations;
   }
 
   getDestinationById(id) {
     return (
-      this.destinations.find((destination) => destination.id === id) || null
+      this.#destinations.find((destination) => destination.id === id) || null
     );
   }
 }
