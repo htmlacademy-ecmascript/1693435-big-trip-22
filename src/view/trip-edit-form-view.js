@@ -146,17 +146,39 @@ export default class TripEditFormView extends AbstractView {
   #allDestinations = null;
   #offers = null;
   #selectedOffers = null;
+  #onCloseClick = null;
+  #onSubmitForm = null;
 
-  constructor({eventPoint, destination, allDestinations, offers, selectedOffers}) {
+  constructor({eventPoint, destination, allDestinations, offers, selectedOffers, onCloseClick, onSubmitForm}) {
     super();
     this.#eventPoint = eventPoint;
     this.#destination = destination;
     this.#allDestinations = allDestinations;
     this.#offers = offers;
     this.#selectedOffers = selectedOffers || null;
+    this.#onCloseClick = onCloseClick;
+    this.#onSubmitForm = onSubmitForm;
+
+    if (this.#eventPoint.id) {
+      this.element.querySelector('.event__rollup-btn')
+        .addEventListener('click', this.#closeEditFrom);
+
+      this.element.querySelector('.event__save-btn')
+        .addEventListener('click', this.#submitEditFrom);
+    }
   }
 
   get template() {
     return createTripEditFormView(this.#eventPoint, this.#destination, this.#allDestinations, this.#offers, this.#selectedOffers);
   }
+
+  #closeEditFrom = (evt) => {
+    evt.preventDefault();
+    this.#onCloseClick();
+  };
+
+  #submitEditFrom = (evt) => {
+    evt.preventDefault();
+    this.#onSubmitForm();
+  };
 }

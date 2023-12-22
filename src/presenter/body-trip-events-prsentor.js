@@ -3,7 +3,7 @@ import TripEditFormView from '../view/trip-edit-form-view.js';
 import TripEventsListView from '../view/trip-events-list-view.js';
 import SortingView from '../view/sorting-view.js';
 import WayPointView from '../view/waypoint-view.js';
-import {render} from '../framework/render.js';
+import {render, replace} from '../framework/render.js';
 import {getDefaultPoint} from '../const.js';
 
 export default class BodyTripEventsPresentor {
@@ -36,13 +36,8 @@ export default class BodyTripEventsPresentor {
     this.#renderNewForm();
 
     for (let i = 0; i < this.#eventPoints.length; i++) {
-      const destination = this.#destinationsModel.getDestinationById(this.#eventPoints[i].destination);
-      const offers = [...this.#offersModel.getOffersById(this.#eventPoints[i].type, this.#eventPoints[i].offers)];
-
-      this.#renderWayPont(this.#eventPoints[i], destination, offers);
+      this.#renderWayPont(this.#eventPoints[i]);
     }
-
-    this.#renderEditForm();
   }
 
   #renderNewForm() {
@@ -56,25 +51,61 @@ export default class BodyTripEventsPresentor {
     render(newFormComponent, this.#tripEventsListComponent.element);
   }
 
-  #renderWayPont(point, destination, offers) {
+  #renderWayPont(point) {
+    const escKeyDownHandler = (evt) => {
+      if (evt.key === 'Escape') {
+        evt.preventDefault();
+        replaceEditorToPoint();
+        document.removeEventListener('keydown', escKeyDownHandler);
+      }
+    };
+
     const wayPointComponent = new WayPointView({
       eventPoint: point,
-      destination,
-      offers,
+      destination: this.#destinationsModel.getDestinationById(point.destination),
+      offers: [...this.#offersModel.getOffersById(point.type, point.offers)],
+      onEditClick: () => {
+        pointEditHandler();
+        document.addEventListener('keydown', escKeyDownHandler);
+      }
     });
+
+    const editPointComponent = new TripEditFormView({
+      eventPoint: point,
+      destination: this.#destinationsModel.getDestinationById(point.destination),
+      allDestinations: this.#destinations,
+      selectedOffers: [...this.#offersModel.getOffersById(point.type, point.offers)],
+      offers: this.#offersModel.getOffersByType(point.type),
+      onCloseClick: () => {
+        pointCloseHandler();
+        document.addEventListener('keydown', escKeyDownHandler);
+      },
+      onSubmitForm: () => {
+        pointSubmitHandler();
+        document.addEventListener('keydown', escKeyDownHandler);
+      }
+    });
+
+    function replacePointToEditor() {
+      replace(editPointComponent, wayPointComponent);
+    }
+
+    function replaceEditorToPoint() {
+      replace(wayPointComponent, editPointComponent);
+    }
+
+    function pointEditHandler() {
+      replacePointToEditor();
+    }
+
+    function pointCloseHandler() {
+      replaceEditorToPoint();
+    }
+
+    function pointSubmitHandler() {
+      replaceEditorToPoint();
+    }
 
     render(wayPointComponent, this.#tripEventsListComponent.element);
-  }
-
-  #renderEditForm() {
-    const editFormComponent = new TripEditFormView({
-      eventPoint: this.#eventPoints[0],
-      destination: this.#destinationsModel.getDestinationById(this.#eventPoints[0].destination),
-      allDestinations: this.#destinations,
-      selectedOffers: [...this.#offersModel.getOffersById(this.#eventPoints[0].type, this.#eventPoints[0].offers)],
-      offers: this.#offersModel.getOffersByType(this.#eventPoints[0].type),
-    });
-
-    render(editFormComponent, this.#tripEventsListComponent.element);
   }
 }
