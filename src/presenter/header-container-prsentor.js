@@ -2,9 +2,9 @@ import HeaderTripMainContainerView from '../view/header-main-container-view.js';
 import HeaderTripInfoView from '../view/header-trip-info-view.js';
 import FiltersView from '../view/filters-view.js';
 import NewEventButtonView from '../view/new-event-button-view.js';
-import {render} from '../render.js';
+import {render} from '../framework/render.js';
 
-export default class HeaderContainer {
+export default class HeaderPresentor {
   headerComponent = new HeaderTripMainContainerView();
 
   constructor({headerParentContainer}) {
@@ -13,8 +13,8 @@ export default class HeaderContainer {
 
   init() {
     render(this.headerComponent, this.headerParentContainer);
-    render(new HeaderTripInfoView(), this.headerComponent.getElement());
-    render(new FiltersView(), this.headerComponent.getElement());
-    render(new NewEventButtonView(), this.headerComponent.getElement());
+    render(new HeaderTripInfoView(), this.headerComponent.element);
+    render(new FiltersView(), this.headerComponent.element);
+    render(new NewEventButtonView(), this.headerComponent.element);
   }
 }

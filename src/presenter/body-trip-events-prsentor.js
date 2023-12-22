@@ -3,10 +3,10 @@ import TripEditFormView from '../view/trip-edit-form-view.js';
 import TripEventsListView from '../view/trip-events-list-view.js';
 import SortingView from '../view/sorting-view.js';
 import WayPointView from '../view/waypoint-view.js';
-import {render} from '../render.js';
+import {render} from '../framework/render.js';
 import {getDefaultPoint} from '../const.js';
 
-export default class BodyTripEventsContainer {
+export default class BodyTripEventsPresentor {
   tripEventComponent = new TripEventContainerView();
   tripEventsListComponent = new TripEventsListView();
 
@@ -23,15 +23,15 @@ export default class BodyTripEventsContainer {
     this.offers = [...this.offersModel.getOffers()];
 
     render(this.tripEventComponent, this.tripEventContainer);
-    render(new SortingView(), this.tripEventComponent.getElement());
-    render(this.tripEventsListComponent, this.tripEventComponent.getElement());
+    render(new SortingView(), this.tripEventComponent.element);
+    render(this.tripEventsListComponent, this.tripEventComponent.element);
 
     render(new TripEditFormView({
       eventPoint: getDefaultPoint(),
       destination: this.destinationsModel.getDestinationById(getDefaultPoint().destination),
       allDestinations: this.destinations,
       offers: this.offersModel.getOffersByType(getDefaultPoint().type),
-    }), this.tripEventsListComponent.getElement());
+    }), this.tripEventsListComponent.element);
 
     for (let i = 0; i < this.eventPoints.length; i++) {
       const destination = this.destinationsModel.getDestinationById(this.eventPoints[i].destination);
@@ -42,7 +42,7 @@ export default class BodyTripEventsContainer {
           destination,
           offers,
         }),
-        this.tripEventsListComponent.getElement());
+        this.tripEventsListComponent.element);
     }
 
     render(new TripEditFormView({
@@ -51,6 +51,6 @@ export default class BodyTripEventsContainer {
       allDestinations: this.destinations,
       selectedOffers: [...this.offersModel.getOffersById(this.eventPoints[0].type, this.eventPoints[0].offers)],
       offers: this.offersModel.getOffersByType(this.eventPoints[0].type),
-    }), this.tripEventsListComponent.getElement());
+    }), this.tripEventsListComponent.element);
   }
 }

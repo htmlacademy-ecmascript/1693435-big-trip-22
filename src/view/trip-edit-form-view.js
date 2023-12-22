@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {POINT_TYPES} from '../const.js';
 import {humanizeTaskDueDate} from '../utils.js';
 import {DATE_FORMAT, сapitalizeTheFirstLetter} from '../const.js';
@@ -140,28 +140,23 @@ function createTripEditFormView (eventPoint, destination, allDestinations, offer
   );
 }
 
-export default class TripEditFormView {
+export default class TripEditFormView extends AbstractView {
+  #eventPoint = null;
+  #destination = null;
+  #allDestinations = null;
+  #offers = null;
+  #selectedOffers = null;
+
   constructor({eventPoint, destination, allDestinations, offers, selectedOffers}) {
-    this.eventPoint = eventPoint;
-    this.destination = destination;
-    this.allDestinations = allDestinations;
-    this.offers = offers;
-    this.selectedOffers = selectedOffers || null;
+    super();
+    this.#eventPoint = eventPoint;
+    this.#destination = destination;
+    this.#allDestinations = allDestinations;
+    this.#offers = offers;
+    this.#selectedOffers = selectedOffers || null;
   }
 
-  getTemplate() {
-    return createTripEditFormView(this.eventPoint, this.destination, this.allDestinations, this.offers, this.selectedOffers);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  get template() {
+    return createTripEditFormView(this.#eventPoint, this.#destination, this.#allDestinations, this.#offers, this.#selectedOffers);
   }
 }
