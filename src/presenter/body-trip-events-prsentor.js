@@ -33,31 +33,48 @@ export default class BodyTripEventsPresentor {
     render(new SortingView(), this.#tripEventComponent.element);
     render(this.#tripEventsListComponent, this.#tripEventComponent.element);
 
-    render(new TripEditFormView({
-      eventPoint: getDefaultPoint(),
-      destination: this.#destinationsModel.getDestinationById(getDefaultPoint().destination),
-      allDestinations: this.#destinations,
-      offers: this.#offersModel.getOffersByType(getDefaultPoint().type),
-    }), this.#tripEventsListComponent.element);
+    this.#renderNewForm();
 
     for (let i = 0; i < this.#eventPoints.length; i++) {
       const destination = this.#destinationsModel.getDestinationById(this.#eventPoints[i].destination);
       const offers = [...this.#offersModel.getOffersById(this.#eventPoints[i].type, this.#eventPoints[i].offers)];
-      render(
-        new WayPointView({
-          eventPoint: this.#eventPoints[i],
-          destination,
-          offers,
-        }),
-        this.#tripEventsListComponent.element);
+
+      this.#renderWayPont(this.#eventPoints[i], destination, offers);
     }
 
-    render(new TripEditFormView({
+    this.#renderEditForm();
+  }
+
+  #renderNewForm() {
+    const newFormComponent = new TripEditFormView({
+      eventPoint: getDefaultPoint(),
+      destination: this.#destinationsModel.getDestinationById(getDefaultPoint().destination),
+      allDestinations: this.#destinations,
+      offers: this.#offersModel.getOffersByType(getDefaultPoint().type),
+    });
+
+    render(newFormComponent, this.#tripEventsListComponent.element);
+  }
+
+  #renderWayPont(point, destination, offers) {
+    const wayPointComponent = new WayPointView({
+      eventPoint: point,
+      destination,
+      offers,
+    });
+
+    render(wayPointComponent, this.#tripEventsListComponent.element);
+  }
+
+  #renderEditForm() {
+    const editFormComponent = new TripEditFormView({
       eventPoint: this.#eventPoints[0],
       destination: this.#destinationsModel.getDestinationById(this.#eventPoints[0].destination),
       allDestinations: this.#destinations,
       selectedOffers: [...this.#offersModel.getOffersById(this.#eventPoints[0].type, this.#eventPoints[0].offers)],
       offers: this.#offersModel.getOffersByType(this.#eventPoints[0].type),
-    }), this.#tripEventsListComponent.element);
+    });
+
+    render(editFormComponent, this.#tripEventsListComponent.element);
   }
 }

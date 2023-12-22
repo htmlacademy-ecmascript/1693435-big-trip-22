@@ -5,16 +5,18 @@ import NewEventButtonView from '../view/new-event-button-view.js';
 import {render} from '../framework/render.js';
 
 export default class HeaderPresentor {
-  headerComponent = new HeaderTripMainContainerView();
+  #headerParentContainer = null;
+
+  #headerComponent = new HeaderTripMainContainerView();
 
   constructor({headerParentContainer}) {
-    this.headerParentContainer = headerParentContainer;
+    this.#headerParentContainer = headerParentContainer;
   }
 
   init() {
-    render(this.headerComponent, this.headerParentContainer);
-    render(new HeaderTripInfoView(), this.headerComponent.element);
-    render(new FiltersView(), this.headerComponent.element);
-    render(new NewEventButtonView(), this.headerComponent.element);
+    render(this.#headerComponent, this.#headerParentContainer);
+    render(new HeaderTripInfoView(), this.#headerComponent.element);
+    render(new FiltersView(), this.#headerComponent.element);
+    render(new NewEventButtonView(), this.#headerComponent.element);
   }
 }
