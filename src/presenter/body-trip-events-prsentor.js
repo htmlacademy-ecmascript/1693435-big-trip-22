@@ -33,7 +33,7 @@ export default class BodyTripEventsPresentor {
     render(new SortingView(), this.#tripEventComponent.element);
     render(this.#tripEventsListComponent, this.#tripEventComponent.element);
 
-    this.#renderNewForm();
+    // this.#renderNewForm();
 
     for (let i = 0; i < this.#eventPoints.length; i++) {
       this.#renderWayPont(this.#eventPoints[i]);
