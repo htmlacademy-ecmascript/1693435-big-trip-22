@@ -1,4 +1,4 @@
-import {getRandomInteger, getRandomArrayElement} from '../utils.js';
+import {getRandomInteger, getRandomArrayElement} from '../utils/common.js';
 import {PICTURE_URL, DESCRIPTIONS} from '../const.js';
 
 const MAX_RANDOM_COUNT = 1000;

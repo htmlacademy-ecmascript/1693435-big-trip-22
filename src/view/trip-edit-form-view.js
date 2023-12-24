@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import {POINT_TYPES} from '../const.js';
-import {humanizeTaskDueDate} from '../utils.js';
+import {humanizeTaskDueDate} from '../utils/point.js';
 import {DATE_FORMAT, сapitalizeTheFirstLetter} from '../const.js';
 
 function createTypeTemplate (type, id) {
@@ -125,8 +125,8 @@ function createTripEditFormView (eventPoint, destination, allDestinations, offer
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">${id ? 'Delete' : 'Cancel'}</button>
-      ${id ?
+      <button class="event__reset-btn" type="reset">${id !== 'default-point-id' ? 'Delete' : 'Cancel'}</button>
+      ${id !== 'default-point-id' ?
       (`<button class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
       </button>`)
@@ -159,7 +159,7 @@ export default class TripEditFormView extends AbstractView {
     this.#onCloseClick = onCloseClick;
     this.#onSubmitForm = onSubmitForm;
 
-    if (this.#eventPoint.id) {
+    if (this.#eventPoint.id !== 'default-point-id') {
       this.element.querySelector('.event__rollup-btn')
         .addEventListener('click', this.#closeEditFrom);
 

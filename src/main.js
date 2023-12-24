@@ -17,7 +17,10 @@ const bodyTripEventsPresenter = new BodyTripEventsPresentor({
 });
 
 const siteHeaderElement = document.querySelector('.page-header .page-header__container');
-const headerPresenter = new HeaderPresentor({headerParentContainer: siteHeaderElement});
+const headerPresenter = new HeaderPresentor({
+  headerParentContainer: siteHeaderElement,
+  eventPointsModel
+});
 
 bodyTripEventsPresenter.init();
 headerPresenter.init();
