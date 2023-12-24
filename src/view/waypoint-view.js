@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {humanizeTaskDueDate, getTimeDifference} from '../utils.js';
 import {DATE_FORMAT} from '../const.js';
 
@@ -21,7 +21,7 @@ function createWayPointView (eventPoint, destination, offers) {
       <div class="event">
         <time class="event__date" datetime="${humanizeTaskDueDate(dateFrom, DATE_FORMAT.date)}">${humanizeTaskDueDate(dateFrom, DATE_FORMAT.month)}</time>
         <div class="event__type">
-          <img class="event__type-icon" width="42" height="42" src="img/icons/taxi.png" alt="Event type icon">
+          <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
         <h3 class="event__title">${type} ${name}</h3>
         <div class="event__schedule">
@@ -53,26 +53,22 @@ function createWayPointView (eventPoint, destination, offers) {
   );
 }
 
-export default class WayPointView {
-  constructor({eventPoint, destination, offers}) {
-    this.eventPoint = eventPoint;
-    this.destination = destination;
-    this.offers = offers;
+export default class WayPointView extends AbstractView {
+  #eventPoint = null;
+  #destination = null;
+  #offers = null;
+  #onEditClick = null;
+
+  constructor({eventPoint, destination, offers, onEditClick}) {
+    super();
+    this.#eventPoint = eventPoint;
+    this.#destination = destination;
+    this.#offers = offers;
+    this.#onEditClick = onEditClick;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#onEditClick);
   }
 
-  getTemplate() {
-    return createWayPointView(this.eventPoint, this.destination, this.offers);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  get template() {
+    return createWayPointView(this.#eventPoint, this.#destination, this.#offers);
   }
 }

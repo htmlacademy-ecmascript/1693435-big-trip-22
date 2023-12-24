@@ -1,23 +1,11 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 function createHeaderTripMainContainerView() {
   return '<div class="trip-main"></div>';
 }
 
-export default class HeaderTripMainContainerView {
-  getTemplate() {
+export default class HeaderTripMainContainerView extends AbstractView {
+  get template() {
     return createHeaderTripMainContainerView();
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

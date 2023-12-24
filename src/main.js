@@ -1,5 +1,5 @@
-import BodyTripEventsContainer from './presenter/body-trip-events-prsentor.js';
-import HeaderContainer from './presenter/header-container-prsentor.js';
+import BodyTripEventsPresentor from './presenter/body-trip-events-prsentor.js';
+import HeaderPresentor from './presenter/header-container-prsentor.js';
 import EventPointsModel from './model/points-model.js';
 import DestinationsModel from './model/destination-model.js';
 import OffersModel from './model/offers-model.js';
@@ -9,7 +9,7 @@ const bodyContainerElement = bodyMainContainer.querySelector('.page-body__contai
 const eventPointsModel = new EventPointsModel();
 const destinationsModel = new DestinationsModel();
 const offersModel = new OffersModel();
-const bodyTripEventsPresenter = new BodyTripEventsContainer({
+const bodyTripEventsPresenter = new BodyTripEventsPresentor({
   tripEventContainer: bodyContainerElement,
   eventPointsModel,
   destinationsModel,
@@ -17,7 +17,7 @@ const bodyTripEventsPresenter = new BodyTripEventsContainer({
 });
 
 const siteHeaderElement = document.querySelector('.page-header .page-header__container');
-const headerPresenter = new HeaderContainer({headerParentContainer: siteHeaderElement});
+const headerPresenter = new HeaderPresentor({headerParentContainer: siteHeaderElement});
 
 bodyTripEventsPresenter.init();
 headerPresenter.init();
