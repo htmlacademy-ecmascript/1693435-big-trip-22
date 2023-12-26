@@ -4,7 +4,8 @@ import TripEventsListView from '../view/trip-events-list-view.js';
 import SortingView from '../view/sorting-view.js';
 import WayPointView from '../view/waypoint-view.js';
 import {render, replace} from '../framework/render.js';
-import {getDefaultPoint} from '../const.js';
+import {getDefaultPoint, sortingTypes} from '../const.js';
+import NoEventPointsView from '../view/no-event-points-view.js';
 
 export default class BodyTripEventsPresentor {
   #tripEventContainer = null;
@@ -29,15 +30,7 @@ export default class BodyTripEventsPresentor {
     this.#eventPoints = [...this.#eventPointsModel.eventPoints];
     this.#destinations = [...this.#destinationsModel.destinations];
 
-    render(this.#tripEventComponent, this.#tripEventContainer);
-    render(new SortingView(), this.#tripEventComponent.element);
-    render(this.#tripEventsListComponent, this.#tripEventComponent.element);
-
-    // this.#renderNewForm();
-
-    for (let i = 0; i < this.#eventPoints.length; i++) {
-      this.#renderWayPont(this.#eventPoints[i]);
-    }
+    this.#renderEvetsPointList();
   }
 
   #renderNewForm() {
@@ -107,5 +100,23 @@ export default class BodyTripEventsPresentor {
     }
 
     render(wayPointComponent, this.#tripEventsListComponent.element);
+  }
+
+  #renderEvetsPointList() {
+    render(this.#tripEventComponent, this.#tripEventContainer);
+
+    if (!this.#eventPoints.length) {
+      render(new NoEventPointsView(), this.#tripEventComponent.element);
+      return;
+    }
+
+    render(new SortingView({sortingTypes}), this.#tripEventComponent.element);
+    render(this.#tripEventsListComponent, this.#tripEventComponent.element);
+
+    // this.#renderNewForm();
+
+    for (let i = 0; i < this.#eventPoints.length; i++) {
+      this.#renderWayPont(this.#eventPoints[i]);
+    }
   }
 }

@@ -1,5 +1,4 @@
 const SEC_IN_MINUTES = 60;
-const MILISEC_IN_HOUR = SEC_IN_MINUTES * SEC_IN_MINUTES * SEC_IN_MINUTES;
 const HOUR_IN_A_DAY = 24;
 const PICTURE_URL = 'https://loremflickr.com/248/152?random=';
 
@@ -30,8 +29,44 @@ const DESCRIPTIONS = [
   'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.',
 ];
 
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past',
+};
+
+const sortingTypes = [
+  {
+    type: 'day',
+    isChecked: true,
+    isDisabled: false,
+  },
+  {
+    type: 'event',
+    isChecked: false,
+    isDisabled: false,
+  },
+  {
+    type: 'time',
+    isChecked: false,
+    isDisabled: true,
+  },
+  {
+    type: 'price',
+    isChecked: false,
+    isDisabled: true,
+  },
+  {
+    type: 'offers',
+    isChecked: false,
+    isDisabled: false,
+  },
+];
+
 function getDefaultPoint() {
   return ({
+    id: 'default-point-id',
     basePrice: 0,
     dateFrom: '',
     dateTo: '',
@@ -46,4 +81,4 @@ function сapitalizeTheFirstLetter(word) {
   return word[0].toUpperCase() + word.slice(1);
 }
 
-export {SEC_IN_MINUTES, MILISEC_IN_HOUR, HOUR_IN_A_DAY, PICTURE_URL, DATE_FORMAT, POINT_TYPES, DESCRIPTIONS, getDefaultPoint, сapitalizeTheFirstLetter};
+export {SEC_IN_MINUTES, HOUR_IN_A_DAY, PICTURE_URL, DATE_FORMAT, POINT_TYPES, DESCRIPTIONS, FilterType, sortingTypes, getDefaultPoint, сapitalizeTheFirstLetter};

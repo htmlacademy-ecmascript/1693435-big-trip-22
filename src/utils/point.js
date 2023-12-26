@@ -1,13 +1,5 @@
 import dayjs from 'dayjs';
-import {SEC_IN_MINUTES, HOUR_IN_A_DAY} from './const';
-
-function getRandomArrayElement(items) {
-  return items[Math.floor(Math.random() * items.length)];
-}
-
-function getRandomInteger(maxRandomvalue) {
-  return Math.floor(Math.random() * maxRandomvalue);
-}
+import {SEC_IN_MINUTES, HOUR_IN_A_DAY} from '../const.js';
 
 function humanizeTaskDueDate(dueDate, format) {
   return dueDate ? dayjs(dueDate).format(format) : '';
@@ -37,4 +29,22 @@ function getTimeDifference(start, end) {
   return durationString;
 }
 
-export {getRandomArrayElement, getRandomInteger, humanizeTaskDueDate, getTimeDifference};
+function isFuturePoint(dueDate) {
+  const now = dayjs();
+  const pointDate = dayjs(dueDate);
+  return pointDate.diff(now) > 0;
+}
+
+function isPresentPoint(dueDate) {
+  const now = dayjs();
+  const pointDate = dayjs(dueDate);
+  return pointDate.diff(now) <= 0;
+}
+
+function isPastPoint(dueDate) {
+  const now = dayjs();
+  const pointDate = dayjs(dueDate);
+  return pointDate.diff(now) < 0;
+}
+
+export {humanizeTaskDueDate, getTimeDifference, isFuturePoint, isPresentPoint, isPastPoint};
