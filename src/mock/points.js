@@ -1,8 +1,8 @@
 import {getRandomArrayElement} from '../utils/common.js';
+import {nanoid} from 'nanoid';
 
 const points = [
   {
-    id: 'f4b62099-293f-4c3d-a702-94eec4a2808c1',
     basePrice: 2300,
     dateFrom: '2023-12-15T12:55:56.845Z',
     dateTo: '2023-12-15T13:11:56.845Z',
@@ -16,7 +16,6 @@ const points = [
     type: 'taxi'
   },
   {
-    id: 'f4b62099-293f-4c3d-a702-94eec4a2808c2',
     basePrice: 1700,
     dateFrom: '2023-11-26T01:55:56.845Z',
     dateTo: '2023-12-08T09:00:13.375Z',
@@ -29,7 +28,6 @@ const points = [
     type: 'flight'
   },
   {
-    id: 'f4b62099-293f-4c3d-a702-94eec4a2808c3',
     basePrice: 1100,
     dateFrom: '2024-04-20T10:55:56.845Z',
     dateTo: '2024-04-20T13:25:13.375Z',
@@ -41,19 +39,21 @@ const points = [
     type: 'train'
   },
   {
-    id: 'f4b62099-293f-4c3d-a702-94eec4a2808c4',
     basePrice: 1600,
     dateFrom: '2024-07-19T00:55:56.845Z',
     dateTo: '2024-08-01T10:22:13.375Z',
     destination: 'cfe416cq-10xa-ye10-8077-2fs9a01edcab5',
-    isFavorite: false,
+    isFavorite: true,
     offers: [],
     type: 'check-in'
   },
 ];
 
 function getRandomPoint() {
-  return getRandomArrayElement(points);
+  return {
+    id: nanoid(),
+    ...getRandomArrayElement(points),
+  };
 }
 
 export {points, getRandomPoint};

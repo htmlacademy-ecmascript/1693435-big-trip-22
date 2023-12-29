@@ -1,32 +1,26 @@
 import dayjs from 'dayjs';
-import {SEC_IN_MINUTES, HOUR_IN_A_DAY} from '../const.js';
+import duration from 'dayjs/plugin/duration.js';
+import {MSEC_IN_HOUR, MSEC_IN_DAY} from '../const.js';
+dayjs.extend(duration);
 
 function humanizeTaskDueDate(dueDate, format) {
   return dueDate ? dayjs(dueDate).format(format) : '';
 }
 
 function getTimeDifference(start, end) {
-  const durationInMinutes = dayjs(end).diff(start, 'minute');
+  const diff = dayjs(end).diff(dayjs(start));
 
-  const days = Math.floor(durationInMinutes / (HOUR_IN_A_DAY * SEC_IN_MINUTES));
-  const hours = Math.floor((durationInMinutes % (HOUR_IN_A_DAY * SEC_IN_MINUTES)) / SEC_IN_MINUTES);
-  const minutes = durationInMinutes % SEC_IN_MINUTES;
-
-  let durationString = '';
-
-  if (days > 0) {
-    durationString += `${days}D `;
+  if (diff >= MSEC_IN_DAY) {
+    return dayjs.duration(diff).format('DD[D] HH[H] mm[M]');
   }
 
-  if (hours > 0) {
-    durationString += `${hours}H `;
+  if (diff >= MSEC_IN_HOUR) {
+    return dayjs.duration(diff).format('HH[H] mm[M]');
   }
 
-  if (minutes > 0 || (days === 0 && hours === 0)) {
-    durationString += `${minutes}M `;
+  if (diff < MSEC_IN_HOUR) {
+    return dayjs.duration(diff).format('mm[M]');
   }
-
-  return durationString;
 }
 
 function isFuturePoint(dueDate) {
@@ -47,4 +41,6 @@ function isPastPoint(dueDate) {
   return pointDate.diff(now) < 0;
 }
 
-export {humanizeTaskDueDate, getTimeDifference, isFuturePoint, isPresentPoint, isPastPoint};
+const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
+
+export {humanizeTaskDueDate, getTimeDifference, isFuturePoint, isPresentPoint, isPastPoint, updateItem};
