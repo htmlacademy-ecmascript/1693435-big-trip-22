@@ -5,12 +5,14 @@ import NoEventPointsView from '../view/no-event-points-view.js';
 import PointPresenter from './point-presenter.js';
 import SortPresenter from './sorting-presenter.js';
 import NewPointFormPresenter from './new-point-form-presenter.js';
+import { updateItem } from '../utils/point.js';
 
 export default class BodyTripEventsPresenter {
   #tripEventContainer = null;
   #eventPointsModel = null;
   #destinationsModel = null;
   #offersModel = null;
+  #pointsPresenter = new Map();
 
   #tripEventComponent = new TripEventContainerView();
   #tripEventsListComponent = new TripEventsListView();
@@ -32,6 +34,11 @@ export default class BodyTripEventsPresenter {
     this.#renderEvetsPointList();
   }
 
+  #handleDataChange = (updatePoint) => {
+    this.#eventPoints = updateItem(this.#eventPoints, updatePoint);
+    this.#pointsPresenter.get(updatePoint.id).init(updatePoint);
+  };
+
   #renderNewForm() {
     const newPointFormPresenter = new NewPointFormPresenter({
       tripEventContainer: this.#tripEventsListComponent.element,
@@ -47,13 +54,12 @@ export default class BodyTripEventsPresenter {
       pointListContainer: this.#tripEventsListComponent.element,
       destinationsModel: this.#destinationsModel,
       offersModel: this.#offersModel,
+      onPointChange: this.#handleDataChange,
+      onModeChange: this.#handleModeChange,
     });
 
     pointPresenter.init(point);
-  }
-
-  #renderTripEventComponent() {
-    render(this.#tripEventComponent, this.#tripEventContainer);
+    this.#pointsPresenter.set(point.id, pointPresenter);
   }
 
   #renderEmptyList() {
@@ -68,18 +74,18 @@ export default class BodyTripEventsPresenter {
     sortPresenter.init();
   }
 
-  #renderListContainer() {
-    render(this.#tripEventsListComponent, this.#tripEventComponent.element);
-  }
-
   #renderPointsList() {
     for (let i = 0; i < this.#eventPoints.length; i++) {
       this.#renderWayPont(this.#eventPoints[i]);
     }
   }
 
+  #handleModeChange = () => {
+    this.#pointsPresenter.forEach((presenter) => presenter.resetView());
+  };
+
   #renderEvetsPointList() {
-    this.#renderTripEventComponent();
+    render(this.#tripEventComponent, this.#tripEventContainer);
 
     if (!this.#eventPoints.length) {
       this.#renderEmptyList();
@@ -87,7 +93,7 @@ export default class BodyTripEventsPresenter {
     }
 
     this.#renderSort();
-    this.#renderListContainer();
+    render(this.#tripEventsListComponent, this.#tripEventComponent.element);
 
     this.#renderPointsList();
   }
