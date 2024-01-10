@@ -9,8 +9,9 @@ function createsortingItemTemplate({type, isChecked, isDisabled}) {
       type="radio"
       name="trip-sort"
       value="sort-${type}"
+      data-sort-type="${type}"
       ${isChecked ? 'checked' : ''}
-      ${isDisabled ? 'disbled' : ''}>
+      ${isDisabled ? 'disabled' : ''}>
       <label class="trip-sort__btn" for="sort-${type}">${type}</label>
     </div>`
   );
@@ -28,11 +29,24 @@ function createSortingView(sortingTypes) {
 
 export default class SortingView extends AbstractView {
   #sortingTypes = null;
+  #handleSortTypeChange = null;
 
-  constructor({sortingTypes}) {
+  constructor({sortingTypes, onSortTypeChange}) {
     super();
     this.#sortingTypes = sortingTypes;
+    this.#handleSortTypeChange = onSortTypeChange;
+
+    this.element.addEventListener('click', this.#sortTypeChangeHandler);
   }
+
+
+  #sortTypeChangeHandler = (evt) => {
+    if (evt.target.tagName !== 'INPUT') {
+      return;
+    }
+
+    this.#handleSortTypeChange(evt.target.dataset.sortType);
+  };
 
   get template() {
     return createSortingView (this.#sortingTypes);

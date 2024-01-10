@@ -1,11 +1,13 @@
 import TripEventContainerView from '../view/trip-events-container-view.js';
 import TripEventsListView from '../view/trip-events-list-view.js';
-import {render} from '../framework/render.js';
+import SortingView from '../view/sorting-view.js';
+import {sortingTypes} from '../const.js';
+import {sortByPrice, sortByTime} from '../utils/point.js';
+import {render, RenderPosition} from '../framework/render.js';
 import NoEventPointsView from '../view/no-event-points-view.js';
 import PointPresenter from './point-presenter.js';
-import SortPresenter from './sorting-presenter.js';
 import NewPointFormPresenter from './new-point-form-presenter.js';
-import { updateItem } from '../utils/point.js';
+import {updateItem} from '../utils/point.js';
 
 export default class BodyTripEventsPresenter {
   #tripEventContainer = null;
@@ -13,6 +15,9 @@ export default class BodyTripEventsPresenter {
   #destinationsModel = null;
   #offersModel = null;
   #pointsPresenter = new Map();
+  #sortComponent = null;
+  #currentSortType = sortingTypes[0].type;
+  #sourcedEventPoints = [];
 
   #tripEventComponent = new TripEventContainerView();
   #tripEventsListComponent = new TripEventsListView();
@@ -30,12 +35,14 @@ export default class BodyTripEventsPresenter {
   init() {
     this.#eventPoints = [...this.#eventPointsModel.eventPoints];
     this.#destinations = [...this.#destinationsModel.destinations];
+    this.#sourcedEventPoints = [...this.#eventPointsModel.eventPoints];
 
     this.#renderEvetsPointList();
   }
 
   #handleDataChange = (updatePoint) => {
     this.#eventPoints = updateItem(this.#eventPoints, updatePoint);
+    this.#sourcedEventPoints = updateItem(this.#sourcedEventPoints, updatePoint);
     this.#pointsPresenter.get(updatePoint.id).init(updatePoint);
   };
 
@@ -66,12 +73,44 @@ export default class BodyTripEventsPresenter {
     render(new NoEventPointsView(), this.#tripEventComponent.element);
   }
 
+  #sortEventPoints(sortType) {
+    switch(sortType) {
+      case 'day':
+        this.#eventPoints = [...this.#sourcedEventPoints];
+        break;
+      case 'time':
+        this.#eventPoints.sort(sortByTime);
+        break;
+      case 'price':
+        this.#eventPoints.sort(sortByPrice);
+        break;
+    }
+
+    this.#currentSortType = sortType.type;
+  }
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#sortEventPoints(sortType);
+    this.#clearEventPointsList();
+    this.#renderPointsList();
+  };
+
+  #clearEventPointsList() {
+    this.#pointsPresenter.forEach((presenter) => presenter.destroy());
+    this.#pointsPresenter.clear();
+  }
+
   #renderSort() {
-    const sortPresenter = new SortPresenter({
-      sortContainer: this.#tripEventComponent.element
+    this.#sortComponent = new SortingView({
+      sortingTypes,
+      onSortTypeChange: this.#handleSortTypeChange
     });
 
-    sortPresenter.init();
+    render(this.#sortComponent, this.#tripEventComponent.element, RenderPosition.AFTERBEGIN);
   }
 
   #renderPointsList() {
