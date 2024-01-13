@@ -1,7 +1,11 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration.js';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore.js';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import {MSEC_IN_HOUR, MSEC_IN_DAY} from '../const.js';
 dayjs.extend(duration);
+dayjs.extend(isSameOrBefore);
+dayjs.extend(isSameOrAfter);
 
 function humanizeTaskDueDate(dueDate, format) {
   return dueDate ? dayjs(dueDate).format(format) : '';
@@ -23,22 +27,16 @@ function getTimeDifference(start, end) {
   }
 }
 
-function isFuturePoint(dueDate) {
-  const now = dayjs();
-  const pointDate = dayjs(dueDate);
-  return pointDate.diff(now) > 0;
+function isFuturePoint(point) {
+  return dayjs().isBefore(dayjs(point.dateFrom));
 }
 
-function isPresentPoint(dueDate) {
-  const now = dayjs();
-  const pointDate = dayjs(dueDate);
-  return pointDate.diff(now) <= 0;
+function isPresentPoint(point) {
+  return dayjs().isSameOrAfter(dayjs(point.dateFrom)) && dayjs().isSameOrBefore(dayjs(point.dateTo));
 }
 
-function isPastPoint(dueDate) {
-  const now = dayjs();
-  const pointDate = dayjs(dueDate);
-  return pointDate.diff(now) < 0;
+function isPastPoint(point) {
+  return dayjs().isAfter(dayjs(point.dateTo));
 }
 
 const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
