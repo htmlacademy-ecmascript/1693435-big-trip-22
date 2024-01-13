@@ -9,7 +9,7 @@ import PointPresenter from './point-presenter.js';
 import NewPointFormPresenter from './new-point-form-presenter.js';
 import {updateItem} from '../utils/point.js';
 
-export default class BodyTripEventsPresenter {
+export default class PointsListPresenter {
   #tripEventContainer = null;
   #eventPointsModel = null;
   #destinationsModel = null;
@@ -123,8 +123,16 @@ export default class BodyTripEventsPresenter {
     this.#pointsPresenter.forEach((presenter) => presenter.resetView());
   };
 
-  #renderEvetsPointList() {
+  #renderEventComponent() {
     render(this.#tripEventComponent, this.#tripEventContainer);
+  }
+
+  #renderEventsListComponent() {
+    render(this.#tripEventsListComponent, this.#tripEventComponent.element);
+  }
+
+  #renderEvetsPointList() {
+    this.#renderEventComponent();
 
     if (!this.#eventPoints.length) {
       this.#renderEmptyList();
@@ -132,7 +140,7 @@ export default class BodyTripEventsPresenter {
     }
 
     this.#renderSort();
-    render(this.#tripEventsListComponent, this.#tripEventComponent.element);
+    this.#renderEventsListComponent();
 
     this.#renderPointsList();
   }

@@ -1,4 +1,4 @@
-import BodyTripEventsPresenter from './body-trip-events-prsenter.js';
+import PointsListPresenter from './points-list-prsenter.js';
 import HeaderPresenter from './header-container-prsenter.js';
 import EventPointsModel from '../model/points-model.js';
 import DestinationsModel from '../model/destination-model.js';
@@ -9,7 +9,7 @@ const bodyContainerElement = bodyMainContainer.querySelector('.page-body__contai
 const eventPointsModel = new EventPointsModel();
 const destinationsModel = new DestinationsModel();
 const offersModel = new OffersModel();
-const bodyTripEventsPresenter = new BodyTripEventsPresenter({
+const pointsListPresenter = new PointsListPresenter({
   tripEventContainer: bodyContainerElement,
   eventPointsModel,
   destinationsModel,
@@ -24,7 +24,7 @@ const headerPresenter = new HeaderPresenter({
 
 export default class MainPresenter {
   init() {
-    bodyTripEventsPresenter.init();
+    pointsListPresenter.init();
     headerPresenter.init();
   }
 }
