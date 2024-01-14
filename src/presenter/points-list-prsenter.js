@@ -63,6 +63,7 @@ export default class PointsListPresenter {
       offersModel: this.#offersModel,
       onPointChange: this.#handleDataChange,
       onModeChange: this.#handleModeChange,
+      allDestinations: this.#destinations,
     });
 
     pointPresenter.init(point);
