@@ -50,22 +50,22 @@ const sortingTypes = [
   {
     type: 'event',
     isChecked: false,
-    isDisabled: false,
+    isDisabled: true,
   },
   {
     type: 'time',
     isChecked: false,
-    isDisabled: true,
+    isDisabled: false,
   },
   {
     type: 'price',
     isChecked: false,
-    isDisabled: true,
+    isDisabled: false,
   },
   {
     type: 'offers',
     isChecked: false,
-    isDisabled: false,
+    isDisabled: true,
   },
 ];
 
