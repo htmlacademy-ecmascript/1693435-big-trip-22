@@ -46,7 +46,7 @@ export default class PointPresenter {
       destination: this.#destinationsModel.getDestinationById(point.destination),
       allDestinations: this.#allDestinations,
       selectedOffers: [...this.#offersModel.getOffersById(point.type, point.offers)],
-      offers: this.#offersModel.getOffersByType(point.type),
+      offers: this.#offersModel.offers,
       onCloseClick: this.#pointCloseHandler,
       onSubmitForm: this.#pointSubmitHandler,
     });
@@ -57,6 +57,7 @@ export default class PointPresenter {
     }
 
     if (this.#mode === Mode.DEFAULT) {
+      this.#editPointComponent.reset(this.#point);
       replace(this.#wayPointComponent, prevtWayPointComponent);
     }
 
@@ -82,6 +83,7 @@ export default class PointPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
+      this.#editPointComponent.reset(this.#point);
       this.#replaceEditorToPoint();
       document.removeEventListener('keydown', this.#escKeyDownHandler);
     }
@@ -104,6 +106,7 @@ export default class PointPresenter {
   };
 
   #pointCloseHandler = () => {
+    this.#editPointComponent.reset(this.#point);
     this.#replaceEditorToPoint();
   };
 

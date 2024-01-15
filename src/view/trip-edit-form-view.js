@@ -1,6 +1,7 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {POINT_TYPES} from '../const.js';
 import {humanizeTaskDueDate} from '../utils/point.js';
+import {getElementByType, getElementById} from '../utils/common.js';
 import {DATE_FORMAT, сapitalizeTheFirstLetter} from '../const.js';
 
 function createTypeTemplate (type, id) {
@@ -25,7 +26,7 @@ function createOfferView(offer, selectedOffers) {
 
   return (
     `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-${id}" type="checkbox" name="event-offer-luggage" ${isSelected}>
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-${id}" data-offer-id=${id} type="checkbox" name="event-offer-luggage" ${isSelected}>
       <label class="event__offer-label" for="event-offer-luggage-${id}">
         <span class="event__offer-title">${title}</span>
         &plus;&euro;&nbsp;
@@ -75,10 +76,13 @@ function createDestinationView(description, pictures) {
 }
 
 function createTripEditFormView (eventPoint, destination, allDestinations, offers, selectedOffers) {
-  const {id, type, dateFrom, dateTo, basePrice} = eventPoint;
-  const {name, description, pictures} = destination || {};
-  const destinationName = name || '';
+  const {id, type, dateFrom, dateTo, basePrice, destination: pointDestination} = eventPoint;
   const pointId = id || 0;
+  const destinationById = getElementById(allDestinations, pointDestination);
+  const offersByType = getElementByType(offers, type);
+  const {name, description, pictures} = destinationById || {};
+  const destinationName = name || '';
+
   return (
     `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -133,15 +137,15 @@ function createTripEditFormView (eventPoint, destination, allDestinations, offer
       : ''}
     </header>
     <section class="event__details">
-      ${createOffersListView(offers, selectedOffers)}
+      ${offersByType.length !== 0 ? createOffersListView(offersByType, selectedOffers) : ''}
       ${destination ? createDestinationView(description, pictures) : ''}
     </form>
   </li>`
   );
 }
 
-export default class TripEditFormView extends AbstractView {
-  #eventPoint = null;
+export default class TripEditFormView extends AbstractStatefulView {
+  #destinations = null;
   #destination = null;
   #allDestinations = null;
   #offers = null;
@@ -149,9 +153,10 @@ export default class TripEditFormView extends AbstractView {
   #onCloseClick = null;
   #onSubmitForm = null;
 
-  constructor({eventPoint, destination, allDestinations, offers, selectedOffers, onCloseClick, onSubmitForm}) {
+  constructor({eventPoint, destinations, destination, allDestinations, offers, selectedOffers, onCloseClick, onSubmitForm}) {
     super();
-    this.#eventPoint = eventPoint;
+    this._setState(TripEditFormView.parsePointToState(eventPoint));
+    this.#destinations = destinations;
     this.#destination = destination;
     this.#allDestinations = allDestinations;
     this.#offers = offers;
@@ -159,17 +164,17 @@ export default class TripEditFormView extends AbstractView {
     this.#onCloseClick = onCloseClick;
     this.#onSubmitForm = onSubmitForm;
 
-    if (this.#eventPoint.id !== 'default-point-id') {
-      this.element.querySelector('.event__rollup-btn')
-        .addEventListener('click', this.#closeEditFrom);
+    this._restoreHandlers();
+  }
 
-      this.element.querySelector('.event__save-btn')
-        .addEventListener('click', this.#submitEditFrom);
-    }
+  reset = (point) => this.updateElement(point);
+
+  removeElement() {
+    super.removeElement();
   }
 
   get template() {
-    return createTripEditFormView(this.#eventPoint, this.#destination, this.#allDestinations, this.#offers, this.#selectedOffers);
+    return createTripEditFormView(this._state, this.#destination, this.#allDestinations, this.#offers, this.#selectedOffers);
   }
 
   #closeEditFrom = (evt) => {
@@ -179,6 +184,70 @@ export default class TripEditFormView extends AbstractView {
 
   #submitEditFrom = (evt) => {
     evt.preventDefault();
-    this.#onSubmitForm(this.#eventPoint);
+    this.#onSubmitForm(this._state);
   };
+
+  #handlerChangeEventType = (evt) => {
+    evt.preventDefault();
+
+    this.updateElement({
+      type: evt.target.value,
+    });
+  };
+
+  #handlerChangeDestination = (evt) => {
+    const selectedDestination = this.#allDestinations.find((pointDestination) => pointDestination.name === evt.target.value);
+    const selectedDestinationId = (selectedDestination) ? selectedDestination.id : null;
+    this.updateElement({
+      ...this._state,
+      destination: selectedDestinationId,
+    });
+  };
+
+  #handlerCahngeOffer = () => {
+    const checkedBoxes = Array.from(this.element.querySelectorAll('.event__offer-checkbox:checked'));
+
+    this._setState({
+      ...this._state,
+      offers: checkedBoxes.map((element) => element.dataset.offerId)
+    });
+  };
+
+  #handlerPriceChange = (evt) => {
+    this._setState({...this._state, basePrice: evt.target.value});
+  };
+
+  _restoreHandlers() {
+    if (this._state.id !== 'default-point-id') {
+      this.element.querySelector('.event__rollup-btn')
+        .addEventListener('click', this.#closeEditFrom);
+
+      this.element.querySelector('.event__save-btn')
+        .addEventListener('click', this.#submitEditFrom);
+    }
+
+    this.element.querySelector('.event__type-group')
+      .addEventListener('change', this.#handlerChangeEventType);
+
+    this.element.querySelector('.event__input--destination')
+      .addEventListener('change', this.#handlerChangeDestination);
+
+    if (this.element.querySelector('.event__available-offers')) {
+      this.element.querySelector('.event__available-offers')
+        .addEventListener('click', this.#handlerCahngeOffer);
+    }
+
+    this.element.querySelector('.event__input--price')
+      .addEventListener('change', this.#handlerPriceChange);
+  }
+
+  static parsePointToState(eventPoint) {
+    return {...eventPoint};
+  }
+
+  static parseStateToPoint(state) {
+    const eventPoint = {...state};
+
+    return eventPoint;
+  }
 }
