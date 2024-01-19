@@ -1,8 +1,8 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import {POINT_TYPES} from '../const.js';
+import {pointTypes} from '../const.js';
 import {humanizeTaskDueDate} from '../utils/point.js';
 import {getElementByType, getElementById} from '../utils/common.js';
-import {DATE_FORMAT, сapitalizeTheFirstLetter} from '../const.js';
+import {DateFormat, сapitalizeTheFirstLetter} from '../const.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -99,7 +99,7 @@ function createTripEditFormView (eventPoint, destination, allDestinations, offer
         <div class="event__type-list">
           <fieldset class="event__type-group">
             <legend class="visually-hidden">Event type</legend>
-            ${POINT_TYPES.map((item) => createTypeTemplate(item, pointId)).join('')}
+            ${pointTypes.map((item) => createTypeTemplate(item, pointId)).join('')}
           </fieldset>
         </div>
       </div>
@@ -116,10 +116,10 @@ function createTripEditFormView (eventPoint, destination, allDestinations, offer
 
       <div class="event__field-group  event__field-group--time">
         <label class="visually-hidden" for="event-start-time-${pointId}">From</label>
-        <input class="event__input  event__input--time" id="event-start-time-${pointId}" type="text" name="event-start-time" value="${humanizeTaskDueDate(dateFrom, DATE_FORMAT.dateWithTime)}">
+        <input class="event__input  event__input--time" id="event-start-time-${pointId}" type="text" name="event-start-time" value="${humanizeTaskDueDate(dateFrom, DateFormat.dateWithTime)}">
         &mdash;
         <label class="visually-hidden" for="event-end-time-${pointId}">To</label>
-        <input class="event__input  event__input--time" id="event-end-time-${pointId}" type="text" name="event-end-time" value="${humanizeTaskDueDate(dateTo, DATE_FORMAT.dateWithTime)}">
+        <input class="event__input  event__input--time" id="event-end-time-${pointId}" type="text" name="event-end-time" value="${humanizeTaskDueDate(dateTo, DateFormat.dateWithTime)}">
       </div>
 
       <div class="event__field-group  event__field-group--price">

@@ -7,14 +7,14 @@ const MSEC_IN_HOUR = MSEC_IN_SEC * SEC_IN_MINUTES * MIN_IN_HOUR;
 const MSEC_IN_DAY = MSEC_IN_HOUR * HOUR_IN_A_DAY;
 const PICTURE_URL = 'https://loremflickr.com/248/152?random=';
 
-const DATE_FORMAT = {
+const DateFormat = {
   hours: 'HH:mm',
   month: 'MMM D',
   date: 'YYYY-MM-DD',
   dateWithTime: 'YY/MM/DD HH:mm'
 };
 
-const POINT_TYPES = [
+const pointTypes = [
   'taxi',
   'bus',
   'train',
@@ -49,7 +49,7 @@ const SortTypes = {
   OFFERS: 'offers',
 };
 
-const enabledSortType = {
+const EnabledSortType = {
   [SortTypes.DAY]: true,
   [SortTypes.EVENT]: false,
   [SortTypes.TIME]: true,
@@ -65,7 +65,7 @@ function getDefaultPoint() {
     destination: 0,
     isFavorite: false,
     offers: [],
-    type: POINT_TYPES[5],
+    type: pointTypes[5],
   });
 }
 
@@ -84,12 +84,12 @@ export {
   MSEC_IN_HOUR,
   MSEC_IN_DAY,
   PICTURE_URL,
-  DATE_FORMAT,
-  POINT_TYPES,
+  DateFormat,
+  pointTypes,
   DESCRIPTIONS,
   FilterType,
   SortTypes,
-  enabledSortType,
+  EnabledSortType,
   getDefaultPoint,
   сapitalizeTheFirstLetter,
   Mode
