@@ -34,7 +34,7 @@ const DESCRIPTIONS = [
   'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.',
 ];
 
-const FilterType = {
+const FilterTypes = {
   EVERYTHING: 'everything',
   FUTURE: 'future',
   PRESENT: 'present',
@@ -78,6 +78,18 @@ const Mode = {
   EDITING: 'EDITING',
 };
 
+const UserActions = {
+  ADD_EVENT: 'ADD_EVENT',
+  UPDATE_EVENT: 'UPDATE_EVENT',
+  REMOVE_EVENT: 'DELETE_EVENT'
+};
+
+const UpdateTypes = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
 export {
   SEC_IN_MINUTES,
   HOUR_IN_A_DAY,
@@ -87,10 +99,12 @@ export {
   DateFormat,
   pointTypes,
   DESCRIPTIONS,
-  FilterType,
+  FilterTypes,
   SortTypes,
   EnabledSortType,
   getDefaultPoint,
   сapitalizeTheFirstLetter,
-  Mode
+  Mode,
+  UserActions,
+  UpdateTypes,
 };
