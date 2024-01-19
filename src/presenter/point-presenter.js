@@ -69,6 +69,14 @@ export default class PointPresenter {
     remove(prevtEditPointComponent);
   }
 
+  get offers() {
+    return this.#offersModel.offers;
+  }
+
+  get destinations() {
+    return this.#allDestinations;
+  }
+
   destroy() {
     remove(this.#wayPointComponent);
     remove(this.#editPointComponent);
