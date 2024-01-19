@@ -59,7 +59,6 @@ const enabledSortType = {
 
 function getDefaultPoint() {
   return ({
-    id: 'default-point-id',
     basePrice: 0,
     dateFrom: '',
     dateTo: '',

@@ -131,8 +131,8 @@ function createTripEditFormView (eventPoint, destination, allDestinations, offer
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">${id !== 'default-point-id' ? 'Delete' : 'Cancel'}</button>
-      ${id !== 'default-point-id' ?
+      <button class="event__reset-btn" type="reset">${id ? 'Delete' : 'Cancel'}</button>
+      ${id ?
       (`<button class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
       </button>`)
@@ -230,7 +230,7 @@ export default class TripEditFormView extends AbstractStatefulView {
   };
 
   _restoreHandlers() {
-    if (this._state.id !== 'default-point-id') {
+    if (this._state.id) {
       this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeEditFrom);
       this.element.querySelector('.event__save-btn').addEventListener('click', this.#submitEditFrom);
     }
