@@ -3,6 +3,8 @@ import {POINT_TYPES} from '../const.js';
 import {humanizeTaskDueDate} from '../utils/point.js';
 import {getElementByType, getElementById} from '../utils/common.js';
 import {DATE_FORMAT, сapitalizeTheFirstLetter} from '../const.js';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 function createTypeTemplate (type, id) {
   return (
@@ -129,8 +131,8 @@ function createTripEditFormView (eventPoint, destination, allDestinations, offer
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">${id !== 'default-point-id' ? 'Delete' : 'Cancel'}</button>
-      ${id !== 'default-point-id' ?
+      <button class="event__reset-btn" type="reset">${id ? 'Delete' : 'Cancel'}</button>
+      ${id ?
       (`<button class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
       </button>`)
@@ -145,18 +147,18 @@ function createTripEditFormView (eventPoint, destination, allDestinations, offer
 }
 
 export default class TripEditFormView extends AbstractStatefulView {
-  #destinations = null;
   #destination = null;
   #allDestinations = null;
   #offers = null;
   #selectedOffers = null;
   #onCloseClick = null;
   #onSubmitForm = null;
+  #datepickerDateTo = null;
+  #datepickerDateFrom = null;
 
-  constructor({eventPoint, destinations, destination, allDestinations, offers, selectedOffers, onCloseClick, onSubmitForm}) {
+  constructor({eventPoint, destination, allDestinations, offers, selectedOffers, onCloseClick, onSubmitForm}) {
     super();
     this._setState(TripEditFormView.parsePointToState(eventPoint));
-    this.#destinations = destinations;
     this.#destination = destination;
     this.#allDestinations = allDestinations;
     this.#offers = offers;
@@ -171,6 +173,16 @@ export default class TripEditFormView extends AbstractStatefulView {
 
   removeElement() {
     super.removeElement();
+
+    if (this.#datepickerDateFrom) {
+      this.#datepickerDateFrom.destroy();
+      this.#datepickerDateFrom = null;
+    }
+
+    if (this.#datepickerDateTo) {
+      this.#datepickerDateTo.destroy();
+      this.#datepickerDateTo = null;
+    }
   }
 
   get template() {
@@ -218,27 +230,61 @@ export default class TripEditFormView extends AbstractStatefulView {
   };
 
   _restoreHandlers() {
-    if (this._state.id !== 'default-point-id') {
-      this.element.querySelector('.event__rollup-btn')
-        .addEventListener('click', this.#closeEditFrom);
-
-      this.element.querySelector('.event__save-btn')
-        .addEventListener('click', this.#submitEditFrom);
+    if (this._state.id) {
+      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeEditFrom);
+      this.element.querySelector('.event__save-btn').addEventListener('click', this.#submitEditFrom);
     }
 
-    this.element.querySelector('.event__type-group')
-      .addEventListener('change', this.#handlerChangeEventType);
-
-    this.element.querySelector('.event__input--destination')
-      .addEventListener('change', this.#handlerChangeDestination);
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#handlerChangeEventType);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#handlerChangeDestination);
+    this.element.querySelector('.event__input--price').addEventListener('change', this.#handlerPriceChange);
 
     if (this.element.querySelector('.event__available-offers')) {
-      this.element.querySelector('.event__available-offers')
-        .addEventListener('click', this.#handlerCahngeOffer);
+      this.element.querySelector('.event__available-offers').addEventListener('click', this.#handlerCahngeOffer);
     }
 
-    this.element.querySelector('.event__input--price')
-      .addEventListener('change', this.#handlerPriceChange);
+    this.#setDatePicker();
+  }
+
+  #handlerDateFromClose = ([userDate]) => {
+    this._setState({...this._state, dateFrom: userDate});
+    this.#datepickerDateTo.set('minDate', this._state.dateFrom);
+  };
+
+  #handlerDateToClose = ([userDate]) => {
+    this._setState({...this._state, dateTo: userDate});
+    this.#datepickerDateFrom.set('maxDate', this._state.dateTo);
+  };
+
+  #setDatePicker() {
+    const [dateFromElement, dateToElement] = this.element.querySelectorAll('.event__input--time');
+
+    const flatpickConfig = {
+      dateFormat: 'd/m/y H:i',
+      enableTime: true,
+      locale: {firstDayOfWeek: 1},
+      'time_24hr': true,
+    };
+
+    this.#datepickerDateFrom = flatpickr(
+      dateFromElement,
+      {
+        ...flatpickConfig,
+        defaultDate: this._state.dateFrom,
+        onClose: this.#handlerDateFromClose,
+        maxDate: this._state.dateTo,
+      }
+    );
+
+    this.#datepickerDateTo = flatpickr(
+      dateToElement,
+      {
+        ...flatpickConfig,
+        defaultDate: this._state.dateTo,
+        onClose: this.#handlerDateToClose,
+        minDate: this._state.dateFrom,
+      }
+    );
   }
 
   static parsePointToState(eventPoint) {
