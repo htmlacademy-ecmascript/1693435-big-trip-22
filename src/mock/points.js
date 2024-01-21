@@ -18,7 +18,7 @@ const points = [
   {
     basePrice: 1700,
     dateFrom: '2024-01-08T01:55:56.845Z',
-    dateTo: '2024-03-12T09:00:13.375Z',
+    dateTo: '2024-01-12T09:00:13.375Z',
     destination: 'cfe416cq-10xa-ye10-8077-2fs9a01edcab2',
     isFavorite: true,
     offers: [

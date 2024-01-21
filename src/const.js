@@ -41,33 +41,21 @@ const FilterType = {
   PAST: 'past',
 };
 
-const sortingTypes = [
-  {
-    type: 'day',
-    isChecked: true,
-    isDisabled: false,
-  },
-  {
-    type: 'event',
-    isChecked: false,
-    isDisabled: true,
-  },
-  {
-    type: 'time',
-    isChecked: false,
-    isDisabled: false,
-  },
-  {
-    type: 'price',
-    isChecked: false,
-    isDisabled: false,
-  },
-  {
-    type: 'offers',
-    isChecked: false,
-    isDisabled: true,
-  },
-];
+const SortTypes = {
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFERS: 'offers',
+};
+
+const enabledSortType = {
+  [SortTypes.DAY]: true,
+  [SortTypes.EVENT]: false,
+  [SortTypes.TIME]: true,
+  [SortTypes.PRICE]: true,
+  [SortTypes.OFFERS]: false,
+};
 
 function getDefaultPoint() {
   return ({
@@ -101,7 +89,8 @@ export {
   POINT_TYPES,
   DESCRIPTIONS,
   FilterType,
-  sortingTypes,
+  SortTypes,
+  enabledSortType,
   getDefaultPoint,
   сapitalizeTheFirstLetter,
   Mode
