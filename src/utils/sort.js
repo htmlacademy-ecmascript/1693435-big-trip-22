@@ -24,4 +24,4 @@ const sorting = {
   }
 };
 
-export {sorting};
+export {sorting, getPointsByTime, getPointsByPrice};

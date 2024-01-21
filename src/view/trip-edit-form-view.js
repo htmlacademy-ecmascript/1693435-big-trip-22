@@ -23,7 +23,7 @@ function createOfferView(offer, selectedOffers) {
   const {id, title, price} = offer;
   let isSelected = '';
   if (selectedOffers) {
-    isSelected = selectedOffers.map((item) => item.id).includes(id) ? 'checked' : '';
+    isSelected = selectedOffers.includes(id) ? 'checked' : '';
   }
 
   return (
@@ -77,10 +77,10 @@ function createDestinationView(description, pictures) {
   return '';
 }
 
-function createTripEditFormView (eventPoint, destination, allDestinations, offers, selectedOffers) {
-  const {id, type, dateFrom, dateTo, basePrice, destination: pointDestination} = eventPoint;
+function createTripEditFormView (state, allDestinations, offers) {
+  const {id, type, dateFrom, dateTo, basePrice, destination, offers: selectedOffers} = state;
   const pointId = id || 0;
-  const destinationById = getElementById(allDestinations, pointDestination);
+  const destinationById = getElementById(allDestinations, destination);
   const offersByType = getElementByType(offers, type);
   const {name, description, pictures} = destinationById || {};
   const destinationName = name || '';
@@ -140,29 +140,25 @@ function createTripEditFormView (eventPoint, destination, allDestinations, offer
     </header>
     <section class="event__details">
       ${offersByType.length !== 0 ? createOffersListView(offersByType, selectedOffers) : ''}
-      ${destination ? createDestinationView(description, pictures) : ''}
+      ${destinationById ? createDestinationView(description, pictures) : ''}
     </form>
   </li>`
   );
 }
 
 export default class TripEditFormView extends AbstractStatefulView {
-  #destination = null;
   #allDestinations = null;
   #offers = null;
-  #selectedOffers = null;
   #onCloseClick = null;
   #onSubmitForm = null;
   #datepickerDateTo = null;
   #datepickerDateFrom = null;
 
-  constructor({eventPoint, destination, allDestinations, offers, selectedOffers, onCloseClick, onSubmitForm}) {
+  constructor({eventPoint, allDestinations, offers, onCloseClick, onSubmitForm}) {
     super();
     this._setState(TripEditFormView.parsePointToState(eventPoint));
-    this.#destination = destination;
     this.#allDestinations = allDestinations;
     this.#offers = offers;
-    this.#selectedOffers = selectedOffers || null;
     this.#onCloseClick = onCloseClick;
     this.#onSubmitForm = onSubmitForm;
 
@@ -186,7 +182,7 @@ export default class TripEditFormView extends AbstractStatefulView {
   }
 
   get template() {
-    return createTripEditFormView(this._state, this.#destination, this.#allDestinations, this.#offers, this.#selectedOffers);
+    return createTripEditFormView(this._state, this.#allDestinations, this.#offers);
   }
 
   #closeEditFrom = (evt) => {

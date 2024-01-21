@@ -1,11 +1,12 @@
 import TripEditFormView from '../view/trip-edit-form-view.js';
-import {render} from '../framework/render.js';
+import {render, remove} from '../framework/render.js';
 import {getDefaultPoint} from '../const.js';
 
 export default class NewPointFormPresenter {
   #tripEventContainer = null;
   #allDestinations = null;
   #offersModel = null;
+  #newFormComponent = null;
 
   constructor({tripEventContainer, allDestinations, offersModel}) {
     this.#tripEventContainer = tripEventContainer;
@@ -14,16 +15,26 @@ export default class NewPointFormPresenter {
   }
 
   init() {
-    this.#renderNewForm();
-  }
-
-  #renderNewForm() {
-    const newFormComponent = new TripEditFormView({
+    this.#newFormComponent = new TripEditFormView({
       eventPoint: getDefaultPoint(),
       allDestinations: this.#allDestinations,
       offers: this.#offersModel.getOffersByType(getDefaultPoint().type),
     });
 
-    render(newFormComponent, this.#tripEventContainer);
+    this.#renderNewForm();
+  }
+
+  destroy() {
+    remove(this.#newFormComponent);
+  }
+
+  #renderNewForm() {
+    this.#newFormComponent = new TripEditFormView({
+      eventPoint: getDefaultPoint(),
+      allDestinations: this.#allDestinations,
+      offers: this.#offersModel.getOffersByType(getDefaultPoint().type),
+    });
+
+    render(this.#newFormComponent, this.#tripEventContainer);
   }
 }

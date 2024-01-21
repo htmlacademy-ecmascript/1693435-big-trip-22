@@ -13,15 +13,13 @@ export default class PointPresenter {
   #handleDataChange = null;
   #mode = Mode.DEFAULT;
   #handleModeChange = null;
-  #allDestinations = null;
 
-  constructor({pointListContainer, destinationsModel, offersModel, onPointChange, onModeChange, allDestinations}) {
+  constructor({pointListContainer, destinationsModel, offersModel, onPointChange, onModeChange}) {
     this.#pointListContainer = pointListContainer;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
     this.#handleDataChange = onPointChange;
     this.#handleModeChange = onModeChange;
-    this.#allDestinations = allDestinations;
   }
 
   init(point) {
@@ -43,9 +41,7 @@ export default class PointPresenter {
 
     this.#editPointComponent = new TripEditFormView({
       eventPoint: this.#point,
-      destination: this.#destinationsModel.getDestinationById(point.destination),
-      allDestinations: this.#allDestinations,
-      selectedOffers: [...this.#offersModel.getOffersById(point.type, point.offers)],
+      allDestinations: this.#destinationsModel.destinations,
       offers: this.#offersModel.offers,
       onCloseClick: this.#pointCloseHandler,
       onSubmitForm: this.#pointSubmitHandler,
@@ -74,7 +70,7 @@ export default class PointPresenter {
   }
 
   get destinations() {
-    return this.#allDestinations;
+    return this.#destinationsModel.destinations;
   }
 
   destroy() {

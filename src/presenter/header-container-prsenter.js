@@ -7,12 +7,14 @@ import NewEventButtonPresenter from './new-event-button-presenter.js';
 export default class HeaderPresenter {
   #headerParentContainer = null;
   #eventPointsModel = null;
+  #filterModel = null;
 
   #headerComponent = new HeaderTripMainContainerView();
 
-  constructor({headerParentContainer, eventPointsModel}) {
+  constructor({headerParentContainer, eventPointsModel, filterModel}) {
     this.#headerParentContainer = headerParentContainer;
     this.#eventPointsModel = eventPointsModel;
+    this.#filterModel = filterModel;
   }
 
   init() {

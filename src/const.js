@@ -81,7 +81,7 @@ const Mode = {
 const UserActions = {
   ADD_EVENT: 'ADD_EVENT',
   UPDATE_EVENT: 'UPDATE_EVENT',
-  REMOVE_EVENT: 'DELETE_EVENT'
+  DELETE_EVENT: 'DELETE_EVENT'
 };
 
 const UpdateTypes = {
