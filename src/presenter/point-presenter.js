@@ -1,7 +1,7 @@
 import TripEditFormView from '../view/trip-edit-form-view.js';
 import WayPointView from '../view/waypoint-view.js';
 import {remove, render, replace} from '../framework/render.js';
-import {Mode} from '../const.js';
+import {Mode, UpdateTypes, UserActions} from '../const.js';
 
 export default class PointPresenter {
   #pointListContainer = null;
@@ -116,13 +116,28 @@ export default class PointPresenter {
 
   #pointSubmitHandler = (point) => {
     this.#replaceEditorToPoint();
-    this.#handleDataChange(point);
+    this.#handleDataChange(
+      UserActions.UPDATE_EVENT,
+      UpdateTypes.PATCH,
+      point
+    );
+  };
+
+  #handleDeleteClick = (point) => {
+    this.#handleDataChange(
+      UserActions.DELETE_EVENT,
+      UpdateTypes.MINOR,
+      point,
+    );
   };
 
   #favoriteClickHandler = () => {
-    this.#handleDataChange({
-      ...this.#point,
-      isFavorite: !this.#point.isFavorite
-    });
+    this.#handleDataChange(
+      UserActions.UPDATE_EVENT,
+      UpdateTypes.PATCH,
+      {
+        ...this.#point,
+        isFavorite: !this.#point.isFavorite
+      });
   };
 }

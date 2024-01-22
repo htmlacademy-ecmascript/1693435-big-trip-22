@@ -1,9 +1,9 @@
-import PointsListPresenter from './points-list-prsenter.js';
-import HeaderPresenter from './header-container-prsenter.js';
-import EventPointsModel from '../model/points-model.js';
-import DestinationsModel from '../model/destination-model.js';
-import OffersModel from '../model/offers-model.js';
-import FilterModel from '../model/filter-model.js';
+import PointsListPresenter from './presenter/points-list-prsenter.js';
+import HeaderPresenter from './presenter/header-container-prsenter.js';
+import EventPointsModel from './model/points-model.js';
+import DestinationsModel from './model/destination-model.js';
+import OffersModel from './model/offers-model.js';
+import FilterModel from './model/filter-model.js';
 
 const bodyMainContainer = document.querySelector('.page-body__page-main');
 const bodyContainerElement = bodyMainContainer.querySelector('.page-body__container');
@@ -26,7 +26,7 @@ const headerPresenter = new HeaderPresenter({
   filterModel,
 });
 
-export default class MainPresenter {
+export default class BigTripApp {
   init() {
     pointsListPresenter.init();
     headerPresenter.init();

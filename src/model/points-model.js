@@ -1,9 +1,9 @@
 import Observable from '../framework/observable.js';
-import {points, getRandomPoint} from '../mock/points.js';
+import {points} from '../mock/points.js';
 import {updateItem} from '../utils/point.js';
 
 export default class EventPointsModel extends Observable {
-  #eventPoints = Array.from({length: points.length}, getRandomPoint);
+  #eventPoints = Array.from(points);
 
   get eventPoints() {
     return this.#eventPoints;
@@ -21,12 +21,12 @@ export default class EventPointsModel extends Observable {
   }
 
   addPoint(updateType, newPoint) {
-    this.#eventPoints.push(newPoint);
+    this.#eventPoints = [...this.#eventPoints, newPoint];
     this._notify(updateType, newPoint);
   }
 
   deletePoint(updateType, point) {
     this.#eventPoints = this.#eventPoints.filter((item) => item.id !== point.id);
-    this._notify(updateType, point);
+    this._notify(updateType);
   }
 }

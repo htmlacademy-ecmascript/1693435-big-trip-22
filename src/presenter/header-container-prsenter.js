@@ -44,6 +44,7 @@ export default class HeaderPresenter {
     const filtersPresenter = new FiltersPresenter({
       headerComponent: this.#headerComponent.element,
       eventPointsModel: this.#eventPointsModel.eventPoints,
+      filterModel: this.#filterModel,
     });
 
     filtersPresenter.init();
