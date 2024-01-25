@@ -2,6 +2,7 @@ import TripEditFormView from '../view/trip-edit-form-view.js';
 import WayPointView from '../view/waypoint-view.js';
 import {remove, render, replace} from '../framework/render.js';
 import {Mode, UpdateTypes, UserActions} from '../const.js';
+import { isMinorChange } from '../utils/point.js';
 
 export default class PointPresenter {
   #pointListContainer = null;
@@ -116,10 +117,11 @@ export default class PointPresenter {
   };
 
   #pointSubmitHandler = (point) => {
+    const currentTypeChange = isMinorChange(point, this.#point) ? UpdateTypes.MINOR : UpdateTypes.PATCH;
     this.#replaceEditorToPoint();
     this.#handleDataChange(
       UserActions.UPDATE_EVENT,
-      UpdateTypes.PATCH,
+      currentTypeChange,
       point
     );
   };

@@ -90,6 +90,13 @@ const UpdateTypes = {
   MAJOR: 'MAJOR',
 };
 
+const EmptyListMessages = {
+  EVERYTHING: 'Click New Event to create your first point',
+  FUTURE: 'There are no future events now',
+  PRESENT: 'There are no present events now',
+  PAST: 'There are no past events now',
+};
+
 export {
   SEC_IN_MINUTES,
   HOUR_IN_A_DAY,
@@ -107,4 +114,5 @@ export {
   Mode,
   UserActions,
   UpdateTypes,
+  EmptyListMessages,
 };

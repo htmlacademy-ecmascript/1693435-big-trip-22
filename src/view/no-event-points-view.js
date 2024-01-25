@@ -1,15 +1,23 @@
+import { EmptyListMessages } from '../const.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
-function createNoEventPointsTemplate() {
+function createNoEventPointsTemplate({message}) {
   return (
     `<p class="trip-events__msg">
-      Click New Event to create your first point
+      ${message}
     </p>`
   );
 }
 
 export default class NoEventPointsView extends AbstractView {
+  #filterType = null;
+
+  constructor({filterType}) {
+    super();
+    this.#filterType = filterType;
+  }
+
   get template() {
-    return createNoEventPointsTemplate();
+    return createNoEventPointsTemplate({message: EmptyListMessages[this.#filterType.toUpperCase()]});
   }
 }
