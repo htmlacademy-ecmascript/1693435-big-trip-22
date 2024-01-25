@@ -13,6 +13,6 @@ export default class NewEventButtonPresenter {
   }
 
   #renderNewPointButton() {
-    render(new NewEventButtonView(), this.#headerParentContainer);
+    render(new NewEventButtonView({}), this.#headerParentContainer);
   }
 }

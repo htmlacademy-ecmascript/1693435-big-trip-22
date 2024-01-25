@@ -1,29 +1,30 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import RadioListView from './radio-list-view.js';
 
-function createFilterItemView(filter, isChecked) {
-  const {type, count} = filter;
-  return (
-    `<div class="trip-filters__filter">
-      <input
-      id="filter-${type}"
-      class="trip-filters__filter-input  visually-hidden"
-      type="radio"
-      name="trip-filter"
-      value="${type}"
-      ${isChecked ? 'checked' : ''}
-      ${count === 0 ? 'disabled' : ''}>
-      <label class="trip-filters__filter-label" for="filter-${type}">${type}</label>
-    </div>`
+const createFilterTypeListTemplate = (filters) =>
+  filters.reduce(
+    (markup, {type, isChecked, isDisabled}) => `${markup}
+      <div class="trip-filters__filter">
+        <input
+          id="filter-${type}"
+          class="trip-filters__filter-input  visually-hidden"
+          type="radio"
+          name="trip-filter"
+          value="${type}"
+          data-item=${type}
+          ${isChecked ? 'checked' : ''}
+          ${isDisabled ? 'disabled' : ''}>
+          <label class="trip-filters__filter-label" for="filter-${type}">${type}</label>
+      </div>
+    `, ''
   );
-}
 
-function createFiltersView(filterItems) {
+function createFiltersView(filters) {
   return (
     `<div class="trip-main__trip-controls  trip-controls">
       <div class="trip-controls__filters">
         <h2 class="visually-hidden">Filter events</h2>
         <form class="trip-filters" action="#" method="get">
-          ${filterItems.map((filter, index) => createFilterItemView(filter, index === 0)).join('')}
+          ${createFilterTypeListTemplate(filters)}
 
           <button class="visually-hidden" type="submit">Accept filter</button>
         </form>
@@ -32,15 +33,8 @@ function createFiltersView(filterItems) {
   );
 }
 
-export default class FiltersView extends AbstractView {
-  #filters = null;
-
-  constructor({filters}) {
-    super();
-    this.#filters = filters;
-  }
-
+export default class FiltersView extends RadioListView {
   get template() {
-    return createFiltersView(this.#filters);
+    return createFiltersView(this._items);
   }
 }

@@ -10,7 +10,7 @@ const createSortingItemTemplate = (sorting) =>
         type="radio"
         name="trip-sort"
         value="sort-${type}"
-        data-sort-type="${type}"
+        data-item="${type}"
         ${isChecked ? 'checked' : ''}
         ${isDisabled ? 'disabled' : ''}>
         <label class="trip-sort__btn" for="sort-${type}">${type}</label>

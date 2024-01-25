@@ -3,9 +3,11 @@ import {render} from '../framework/render.js';
 
 export default class HeaderInfoPresenter {
   #headerParentContainer = null;
+  #eventPointsModel = null;
 
-  constructor({headerParentContainer}) {
+  constructor({headerParentContainer, eventPointsModel}) {
     this.#headerParentContainer = headerParentContainer;
+    this.#eventPointsModel = eventPointsModel;
   }
 
   init() {

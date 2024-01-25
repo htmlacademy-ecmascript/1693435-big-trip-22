@@ -108,7 +108,7 @@ function createTripEditFormView (state, allDestinations, offers) {
         <label class="event__label  event__type-output" for="event-destination-${pointId}">
           ${type}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-${pointId}" type="text" name="event-destination" value="${destinationName}" list="destination-list-${pointId}">
+        <input class="event__input  event__input--destination" id="event-destination-${pointId}" type="text" name="event-destination" value="${destinationName}" list="destination-list-${pointId}" autocomplete="off" required>
         <datalist id="destination-list-${pointId}">  
           ${allDestinations.map((item) => createDestinationsOptionList(item.name)).join('')}
         </datalist>
@@ -116,10 +116,10 @@ function createTripEditFormView (state, allDestinations, offers) {
 
       <div class="event__field-group  event__field-group--time">
         <label class="visually-hidden" for="event-start-time-${pointId}">From</label>
-        <input class="event__input  event__input--time" id="event-start-time-${pointId}" type="text" name="event-start-time" value="${humanizeTaskDueDate(dateFrom, DateFormat.dateWithTime)}">
+        <input class="event__input  event__input--time" id="event-start-time-${pointId}" type="text" name="event-start-time" value="${humanizeTaskDueDate(dateFrom, DateFormat.dateWithTime)}" required>
         &mdash;
         <label class="visually-hidden" for="event-end-time-${pointId}">To</label>
-        <input class="event__input  event__input--time" id="event-end-time-${pointId}" type="text" name="event-end-time" value="${humanizeTaskDueDate(dateTo, DateFormat.dateWithTime)}">
+        <input class="event__input  event__input--time" id="event-end-time-${pointId}" type="text" name="event-end-time" value="${humanizeTaskDueDate(dateTo, DateFormat.dateWithTime)}" required>
       </div>
 
       <div class="event__field-group  event__field-group--price">
@@ -127,7 +127,7 @@ function createTripEditFormView (state, allDestinations, offers) {
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-${pointId}" type="text" name="event-price" value="${basePrice}">
+        <input class="event__input  event__input--price" id="event-price-${pointId}" type="text" name="event-price" value="${basePrice}" required>
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -151,16 +151,18 @@ export default class TripEditFormView extends AbstractStatefulView {
   #offers = null;
   #onCloseClick = null;
   #onSubmitForm = null;
+  #handleDeleteClick = null;
   #datepickerDateTo = null;
   #datepickerDateFrom = null;
 
-  constructor({eventPoint, allDestinations, offers, onCloseClick, onSubmitForm}) {
+  constructor({eventPoint, allDestinations, offers, onCloseClick, onSubmitForm, onDeleteClick}) {
     super();
     this._setState(TripEditFormView.parsePointToState(eventPoint));
     this.#allDestinations = allDestinations;
     this.#offers = offers;
     this.#onCloseClick = onCloseClick;
     this.#onSubmitForm = onSubmitForm;
+    this.#handleDeleteClick = onDeleteClick;
 
     this._restoreHandlers();
   }
@@ -193,6 +195,11 @@ export default class TripEditFormView extends AbstractStatefulView {
   #submitEditFrom = (evt) => {
     evt.preventDefault();
     this.#onSubmitForm(this._state);
+  };
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDeleteClick(this._state);
   };
 
   #handlerChangeEventType = (evt) => {
@@ -229,6 +236,7 @@ export default class TripEditFormView extends AbstractStatefulView {
     if (this._state.id) {
       this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeEditFrom);
       this.element.querySelector('.event__save-btn').addEventListener('click', this.#submitEditFrom);
+      this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
     }
 
     this.element.querySelector('.event__type-group').addEventListener('change', this.#handlerChangeEventType);

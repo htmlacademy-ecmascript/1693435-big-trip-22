@@ -45,6 +45,7 @@ export default class PointPresenter {
       offers: this.#offersModel.offers,
       onCloseClick: this.#pointCloseHandler,
       onSubmitForm: this.#pointSubmitHandler,
+      onDeleteClick: this.#handleDeleteClick,
     });
 
     if (prevtWayPointComponent === null || prevtEditPointComponent === null) {
