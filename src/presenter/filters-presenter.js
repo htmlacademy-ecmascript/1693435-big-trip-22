@@ -15,6 +15,9 @@ export default class FiltersPresenter {
     this.#eventPointsModel = eventPointsModel;
     this.#filtersModel = filtersModel;
 
+
+    // Помогите, пожалуйста, перериовывать фильтры, если унас открывается форма для создания точки,
+    // не поняла, как это сделать:(
     this.#filters = Object.entries(filter).map(([filterType, filterPoints], index) => ({
       type: filterType,
       isChecked: index === 0,

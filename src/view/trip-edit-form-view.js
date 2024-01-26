@@ -5,6 +5,7 @@ import {getElementByType, getElementById} from '../utils/common.js';
 import {DateFormat, сapitalizeTheFirstLetter} from '../const.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import he from 'he';
 
 function createTypeTemplate (type, id) {
   return (
@@ -109,7 +110,7 @@ function createTripEditFormView (state, allDestinations, offers, editorMode) {
         <label class="event__label  event__type-output" for="event-destination-${pointId}">
           ${type}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-${pointId}" type="text" name="event-destination" value="${destinationName}" list="destination-list-${pointId}" autocomplete="off" required>
+        <input class="event__input  event__input--destination" id="event-destination-${pointId}" type="text" name="event-destination" value="${he.encode(destinationName)}" list="destination-list-${pointId}" autocomplete="off" required>
         <datalist id="destination-list-${pointId}">  
           ${allDestinations.map((item) => createDestinationsOptionList(item.name)).join('')}
         </datalist>

@@ -51,15 +51,10 @@ export default class PointsListPresenter {
     this.#renderBoard();
   }
 
-  createPoint() {
-    this.#currentSortType = SortTypes.DAY;
-    this.#filtersModel.setFilter(UpdateTypes.MAJOR, FilterTypes.EVERYTHING);
-    this.#addPointPresenter.init();
-  }
-
   addPointButtonClickHandler = () => {
     this.#isCreating = true;
-    this.#addPointButtonPresenter.disableButton();
+    this.#currentSortType = SortTypes.DAY;
+    this.#filtersModel.set(UpdateTypes.MAJOR, FilterTypes.EVERYTHING);
     this.#addPointPresenter.init();
   };
 
