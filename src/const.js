@@ -78,6 +78,11 @@ const Mode = {
   EDITING: 'EDITING',
 };
 
+const EditTypes = {
+  EDITING: 'EDITING',
+  CREATING: 'CREATING',
+};
+
 const UserActions = {
   ADD_EVENT: 'ADD_EVENT',
   UPDATE_EVENT: 'UPDATE_EVENT',
@@ -112,6 +117,7 @@ export {
   getDefaultPoint,
   сapitalizeTheFirstLetter,
   Mode,
+  EditTypes,
   UserActions,
   UpdateTypes,
   EmptyListMessages,

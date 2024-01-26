@@ -3,16 +3,29 @@ import {render} from '../framework/render.js';
 
 export default class NewEventButtonPresenter {
   #headerParentContainer = null;
+  #newPointButtonComponent = null;
+  #handleButtonClick = null;
 
-  constructor({headerParentContainer}) {
+  constructor({ headerParentContainer }) {
     this.#headerParentContainer = headerParentContainer;
+    this.#newPointButtonComponent = new NewEventButtonView({onAddPointBtnClick: this.#buttonClickHandler});
   }
 
-  init() {
-    this.#renderNewPointButton();
+  init({onButtonClick}) {
+    this.#handleButtonClick = onButtonClick;
+
+    render(this.#newPointButtonComponent, this.#headerParentContainer);
   }
 
-  #renderNewPointButton() {
-    render(new NewEventButtonView({}), this.#headerParentContainer);
-  }
+  enableButton = () => {
+    this.#newPointButtonComponent.element.disabled = false;
+  };
+
+  disableButton = () => {
+    this.#newPointButtonComponent.element.disabled = true;
+  };
+
+  #buttonClickHandler = () => {
+    this.#handleButtonClick();
+  };
 }

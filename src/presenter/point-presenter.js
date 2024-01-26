@@ -1,7 +1,7 @@
 import TripEditFormView from '../view/trip-edit-form-view.js';
 import WayPointView from '../view/waypoint-view.js';
 import {remove, render, replace} from '../framework/render.js';
-import {Mode, UpdateTypes, UserActions} from '../const.js';
+import {EditTypes, Mode, UpdateTypes, UserActions} from '../const.js';
 import { isMinorChange } from '../utils/point.js';
 
 export default class PointPresenter {
@@ -47,6 +47,7 @@ export default class PointPresenter {
       onCloseClick: this.#pointCloseHandler,
       onSubmitForm: this.#pointSubmitHandler,
       onDeleteClick: this.#handleDeleteClick,
+      editorMode: EditTypes.EDITING,
     });
 
     if (prevtWayPointComponent === null || prevtEditPointComponent === null) {

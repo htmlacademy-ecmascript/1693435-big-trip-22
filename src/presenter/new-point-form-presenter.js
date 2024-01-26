@@ -1,14 +1,14 @@
 import TripEditFormView from '../view/trip-edit-form-view.js';
-import {render, remove} from '../framework/render.js';
-import {getDefaultPoint, UserActions, UpdateTypes} from '../const.js';
+import {render, remove, RenderPosition} from '../framework/render.js';
+import {getDefaultPoint, UserActions, UpdateTypes, EditTypes} from '../const.js';
 
 export default class NewPointFormPresenter {
   #tripEventContainer = null;
-  #allDestinations = null;
   #offersModel = null;
   #newFormComponent = null;
   #handleDataChange = null;
   #handleDestroy = null;
+  #allDestinations = [];
 
   constructor({tripEventContainer, allDestinations, offersModel, onDataChange, onDestroy}) {
     this.#tripEventContainer = tripEventContainer;
@@ -26,21 +26,22 @@ export default class NewPointFormPresenter {
     this.#newFormComponent = new TripEditFormView({
       eventPoint: getDefaultPoint(),
       allDestinations: this.#allDestinations,
-      offers: this.#offersModel.getOffersByType(getDefaultPoint().type),
-      onFormSubmit: this.#handleFormSubmit,
-      onDeleteClick: this.#handleDeleteClick,
+      offers: this.#offersModel.offers,
+      onSubmitForm: this.#handleFormSubmit,
+      onCloseClick: this.#handleDestroyClick,
+      editorMode: EditTypes.CREATING,
     });
 
-    render(this.#newFormComponent, this.#tripEventContainer);
+    render(this.#newFormComponent, this.#tripEventContainer, RenderPosition.AFTERBEGIN);
     document.addEventListener('keydown', this.#escKeyDownHandler);
   }
 
-  destroy() {
-    if (this.#newFormComponent === null) {
+  destroy({isCanceled = true}) {
+    if (!this.#newFormComponent) {
       return;
     }
 
-    this.#handleDestroy();
+    this.#handleDestroy({isCanceled});
 
     remove(this.#newFormComponent);
     this.#newFormComponent = null;
@@ -50,22 +51,22 @@ export default class NewPointFormPresenter {
 
   #handleFormSubmit = (point) => {
     this.#handleDataChange(
-      UserActions.ADD_POINT,
+      UserActions.ADD_EVENT,
       UpdateTypes.MINOR,
       {...point},
     );
 
-    this.destroy();
+    this.destroy({isCanceled: false});
   };
 
-  #handleDeleteClick = () => {
-    this.destroy();
+  #handleDestroyClick = () => {
+    this.destroy({isCanceled: true});
   };
 
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
-      this.destroy();
+      this.destroy({isCanceled: true});
     }
   };
 }

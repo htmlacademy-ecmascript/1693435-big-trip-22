@@ -17,7 +17,10 @@ export default class PointsListPresenter {
   #filtersModel = null;
   #sortPresenter = null;
   #emptyListComponent = null;
-  #newPointPresenter = null;
+  #addPointPresenter = null;
+  #addPointButtonPresenter = null;
+  #isCreating = false;
+
   #currentSortType = SortTypes.DAY;
   #pointsPresenter = new Map();
 
@@ -26,12 +29,13 @@ export default class PointsListPresenter {
 
   #destinations = [];
 
-  constructor({tripEventContainer, eventPointsModel, destinationsModel, offersModel, filtersModel}) {
+  constructor({tripEventContainer, eventPointsModel, destinationsModel, offersModel, filtersModel, addPointButtonPresenter}) {
     this.#tripEventContainer = tripEventContainer;
     this.#eventPointsModel = eventPointsModel;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
     this.#filtersModel = filtersModel;
+    this.#addPointButtonPresenter = addPointButtonPresenter;
 
     this.#eventPointsModel.addObserver(this.#handleModelChange);
     this.#filtersModel.addObserver(this.#handleModelChange);
@@ -50,16 +54,32 @@ export default class PointsListPresenter {
   createPoint() {
     this.#currentSortType = SortTypes.DAY;
     this.#filtersModel.setFilter(UpdateTypes.MAJOR, FilterTypes.EVERYTHING);
-    this.#newPointPresenter.init();
+    this.#addPointPresenter.init();
   }
+
+  addPointButtonClickHandler = () => {
+    this.#isCreating = true;
+    this.#addPointButtonPresenter.disableButton();
+    this.#addPointPresenter.init();
+  };
+
+  #addPointDestroyHandler = ({isCanceled}) => {
+    this.#isCreating = false;
+    this.#addPointButtonPresenter.enableButton();
+    if (!this.points.length && isCanceled) {
+      this.#clearBoard();
+      this.#renderBoard();
+    }
+  };
 
   #renderBoard() {
     this.#destinations = [...this.#destinationsModel.destinations];
-    this.#newPointPresenter = new NewPointFormPresenter({
+    this.#addPointPresenter = new NewPointFormPresenter({
       tripEventContainer: this.#tripEventsListComponent.element,
       allDestinations: this.#destinations,
       offersModel: this.#offersModel,
       onDataChange: this.#handleViewAction,
+      onDestroy: this.#addPointDestroyHandler,
     });
 
     this.#renderEvetsPointList();

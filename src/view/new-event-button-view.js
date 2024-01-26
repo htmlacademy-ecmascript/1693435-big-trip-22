@@ -10,8 +10,7 @@ export default class NewEventButtonView extends AbstractView {
   constructor ({onAddPointBtnClick}) {
     super();
     this.#handleAddNewPoint = onAddPointBtnClick;
-
-    this._restoreHandlers();
+    this.element.addEventListener('click', this.#addNewPointHandler);
   }
 
   get template() {
@@ -22,8 +21,4 @@ export default class NewEventButtonView extends AbstractView {
     evt.preventDefault();
     this.#handleAddNewPoint();
   };
-
-  _restoreHandlers() {
-    this.element.addEventListener('click', this.#addNewPointHandler);
-  }
 }

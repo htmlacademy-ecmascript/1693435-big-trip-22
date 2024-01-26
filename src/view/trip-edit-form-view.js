@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import {pointTypes} from '../const.js';
+import {EditTypes, pointTypes} from '../const.js';
 import {humanizeTaskDueDate} from '../utils/point.js';
 import {getElementByType, getElementById} from '../utils/common.js';
 import {DateFormat, сapitalizeTheFirstLetter} from '../const.js';
@@ -77,13 +77,14 @@ function createDestinationView(description, pictures) {
   return '';
 }
 
-function createTripEditFormView (state, allDestinations, offers) {
+function createTripEditFormView (state, allDestinations, offers, editorMode) {
   const {id, type, dateFrom, dateTo, basePrice, destination, offers: selectedOffers} = state;
   const pointId = id || 0;
   const destinationById = getElementById(allDestinations, destination);
-  const offersByType = getElementByType(offers, type);
   const {name, description, pictures} = destinationById || {};
   const destinationName = name || '';
+  const isCreating = editorMode === EditTypes.CREATING;
+  const offersByType = getElementByType(offers, type);
 
   return (
     `<li class="trip-events__item">
@@ -116,10 +117,12 @@ function createTripEditFormView (state, allDestinations, offers) {
 
       <div class="event__field-group  event__field-group--time">
         <label class="visually-hidden" for="event-start-time-${pointId}">From</label>
-        <input class="event__input  event__input--time" id="event-start-time-${pointId}" type="text" name="event-start-time" value="${humanizeTaskDueDate(dateFrom, DateFormat.dateWithTime)}" required>
+        <input class="event__input  event__input--time" id="event-start-time-${pointId}" type="text" name="event-start-time" 
+        value="${isCreating ? '' : humanizeTaskDueDate(dateFrom, DateFormat.dateWithTime)}" required>
         &mdash;
         <label class="visually-hidden" for="event-end-time-${pointId}">To</label>
-        <input class="event__input  event__input--time" id="event-end-time-${pointId}" type="text" name="event-end-time" value="${humanizeTaskDueDate(dateTo, DateFormat.dateWithTime)}" required>
+        <input class="event__input  event__input--time" id="event-end-time-${pointId}" type="text" name="event-end-time" 
+        value="${isCreating ? '' : humanizeTaskDueDate(dateTo, DateFormat.dateWithTime)}" required>
       </div>
 
       <div class="event__field-group  event__field-group--price">
@@ -127,16 +130,15 @@ function createTripEditFormView (state, allDestinations, offers) {
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-${pointId}" type="text" name="event-price" value="${basePrice}" required>
+        <input class="event__input  event__input--price" id="event-price-${pointId}" type="text" name="event-price" value="${isCreating ? '0' : basePrice}" required>
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">${id ? 'Delete' : 'Cancel'}</button>
-      ${id ?
+      <button class="event__reset-btn" type="reset">${isCreating ? 'Cancel' : 'Delete'}</button>
+      ${isCreating ? '' :
       (`<button class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
-      </button>`)
-      : ''}
+      </button>`)}
     </header>
     <section class="event__details">
       ${offersByType.length !== 0 ? createOffersListView(offersByType, selectedOffers) : ''}
@@ -154,8 +156,9 @@ export default class TripEditFormView extends AbstractStatefulView {
   #handleDeleteClick = null;
   #datepickerDateTo = null;
   #datepickerDateFrom = null;
+  #editorMode = null;
 
-  constructor({eventPoint, allDestinations, offers, onCloseClick, onSubmitForm, onDeleteClick}) {
+  constructor({eventPoint, allDestinations, offers, onCloseClick, onSubmitForm, onDeleteClick, editorMode = EditTypes.EDITING}) {
     super();
     this._setState(TripEditFormView.parsePointToState(eventPoint));
     this.#allDestinations = allDestinations;
@@ -163,6 +166,7 @@ export default class TripEditFormView extends AbstractStatefulView {
     this.#onCloseClick = onCloseClick;
     this.#onSubmitForm = onSubmitForm;
     this.#handleDeleteClick = onDeleteClick;
+    this.#editorMode = editorMode;
 
     this._restoreHandlers();
   }
@@ -184,7 +188,7 @@ export default class TripEditFormView extends AbstractStatefulView {
   }
 
   get template() {
-    return createTripEditFormView(this._state, this.#allDestinations, this.#offers);
+    return createTripEditFormView(this._state, this.#allDestinations, this.#offers, this.#editorMode);
   }
 
   #closeEditFrom = (evt) => {
@@ -233,10 +237,13 @@ export default class TripEditFormView extends AbstractStatefulView {
   };
 
   _restoreHandlers() {
-    if (this._state.id) {
+    if (this.#editorMode === EditTypes.EDITING) {
       this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeEditFrom);
       this.element.querySelector('.event__save-btn').addEventListener('click', this.#submitEditFrom);
       this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
+    } else {
+      this.element.querySelector('.event__reset-btn').addEventListener('click', this.#closeEditFrom);
+      this.element.querySelector('.event__save-btn').addEventListener('click', this.#submitEditFrom);
     }
 
     this.element.querySelector('.event__type-group').addEventListener('change', this.#handlerChangeEventType);
