@@ -18,6 +18,7 @@ export default class FiltersPresenter {
 
     // Помогите, пожалуйста, перериовывать фильтры, если унас открывается форма для создания точки,
     // не поняла, как это сделать:(
+
     this.#filters = Object.entries(filter).map(([filterType, filterPoints], index) => ({
       type: filterType,
       isChecked: index === 0,
@@ -26,16 +27,16 @@ export default class FiltersPresenter {
   }
 
   init() {
-    const prevSortComponent = this.#filterComponent;
+    const prevFilterComponent = this.#filterComponent;
 
     this.#filterComponent = new FiltersView({
       items: this.#filters,
       onItemChange: this.#handleFilterTypeChange,
     });
 
-    if(prevSortComponent) {
-      replace(this.#filterComponent, prevSortComponent);
-      remove(prevSortComponent);
+    if(prevFilterComponent) {
+      replace(this.#filterComponent, prevFilterComponent);
+      remove(prevFilterComponent);
     } else {
       render(this.#filterComponent, this.#headerComponent);
     }
