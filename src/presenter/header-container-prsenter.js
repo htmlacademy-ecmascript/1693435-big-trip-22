@@ -1,57 +1,16 @@
-import HeaderTripMainContainerView from '../view/header-main-container-view.js';
-import {render} from '../framework/render.js';
-import FiltersPresenter from './filter-presenter.js';
-import HeaderInfoPresenter from './header-info-presenter.js';
-import NewEventButtonPresenter from './new-event-button-presenter.js';
+import {RenderPosition, render} from '../framework/render.js';
+import HeaderTripInfoView from '../view/header-trip-info-view.js';
 
 export default class HeaderPresenter {
   #headerParentContainer = null;
-  #eventPointsModel = null;
+  #tripHeaderInfoComponent = null;
 
-  #headerComponent = new HeaderTripMainContainerView();
-
-  constructor({headerParentContainer, eventPointsModel}) {
+  constructor({headerParentContainer}) {
     this.#headerParentContainer = headerParentContainer;
-    this.#eventPointsModel = eventPointsModel;
+    this.#tripHeaderInfoComponent = new HeaderTripInfoView();
   }
 
   init() {
-    this.#renderHeader();
-  }
-
-  #renderHeader() {
-    this.#renderHeaderComponent();
-    this.#renderHeaderTripInfo();
-    this.#renderFilters();
-    this.#renderNewPointButton();
-  }
-
-  #renderHeaderComponent() {
-    render(this.#headerComponent, this.#headerParentContainer);
-  }
-
-  #renderHeaderTripInfo() {
-    const headerInfoPresenter = new HeaderInfoPresenter({
-      headerParentContainer: this.#headerComponent.element,
-    });
-
-    headerInfoPresenter.init();
-  }
-
-  #renderFilters() {
-    const filtersPresenter = new FiltersPresenter({
-      headerComponent: this.#headerComponent.element,
-      eventPointsModel: this.#eventPointsModel.eventPoints,
-    });
-
-    filtersPresenter.init();
-  }
-
-  #renderNewPointButton() {
-    const newEventButtonPresenter = new NewEventButtonPresenter({
-      headerParentContainer: this.#headerComponent.element
-    });
-
-    newEventButtonPresenter.init();
+    render(this.#tripHeaderInfoComponent, this.#headerParentContainer, RenderPosition.AFTERBEGIN);
   }
 }

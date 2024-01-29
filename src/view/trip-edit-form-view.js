@@ -1,10 +1,11 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import {POINT_TYPES} from '../const.js';
+import {EditTypes, pointTypes} from '../const.js';
 import {humanizeTaskDueDate} from '../utils/point.js';
 import {getElementByType, getElementById} from '../utils/common.js';
-import {DATE_FORMAT, сapitalizeTheFirstLetter} from '../const.js';
+import {DateFormat, сapitalizeTheFirstLetter} from '../const.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import he from 'he';
 
 function createTypeTemplate (type, id) {
   return (
@@ -23,7 +24,7 @@ function createOfferView(offer, selectedOffers) {
   const {id, title, price} = offer;
   let isSelected = '';
   if (selectedOffers) {
-    isSelected = selectedOffers.map((item) => item.id).includes(id) ? 'checked' : '';
+    isSelected = selectedOffers.includes(id) ? 'checked' : '';
   }
 
   return (
@@ -77,13 +78,14 @@ function createDestinationView(description, pictures) {
   return '';
 }
 
-function createTripEditFormView (eventPoint, destination, allDestinations, offers, selectedOffers) {
-  const {id, type, dateFrom, dateTo, basePrice, destination: pointDestination} = eventPoint;
+function createTripEditFormView (state, allDestinations, offers, editorMode) {
+  const {id, type, dateFrom, dateTo, basePrice, destination, offers: selectedOffers} = state;
   const pointId = id || 0;
-  const destinationById = getElementById(allDestinations, pointDestination);
-  const offersByType = getElementByType(offers, type);
+  const destinationById = getElementById(allDestinations, destination);
   const {name, description, pictures} = destinationById || {};
   const destinationName = name || '';
+  const isCreating = editorMode === EditTypes.CREATING;
+  const offersByType = getElementByType(offers, type);
 
   return (
     `<li class="trip-events__item">
@@ -99,7 +101,7 @@ function createTripEditFormView (eventPoint, destination, allDestinations, offer
         <div class="event__type-list">
           <fieldset class="event__type-group">
             <legend class="visually-hidden">Event type</legend>
-            ${POINT_TYPES.map((item) => createTypeTemplate(item, pointId)).join('')}
+            ${pointTypes.map((item) => createTypeTemplate(item, pointId)).join('')}
           </fieldset>
         </div>
       </div>
@@ -108,7 +110,7 @@ function createTripEditFormView (eventPoint, destination, allDestinations, offer
         <label class="event__label  event__type-output" for="event-destination-${pointId}">
           ${type}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-${pointId}" type="text" name="event-destination" value="${destinationName}" list="destination-list-${pointId}">
+        <input class="event__input  event__input--destination" id="event-destination-${pointId}" type="text" name="event-destination" value="${he.encode(destinationName)}" list="destination-list-${pointId}" autocomplete="off" required>
         <datalist id="destination-list-${pointId}">  
           ${allDestinations.map((item) => createDestinationsOptionList(item.name)).join('')}
         </datalist>
@@ -116,10 +118,12 @@ function createTripEditFormView (eventPoint, destination, allDestinations, offer
 
       <div class="event__field-group  event__field-group--time">
         <label class="visually-hidden" for="event-start-time-${pointId}">From</label>
-        <input class="event__input  event__input--time" id="event-start-time-${pointId}" type="text" name="event-start-time" value="${humanizeTaskDueDate(dateFrom, DATE_FORMAT.dateWithTime)}">
+        <input class="event__input  event__input--time" id="event-start-time-${pointId}" type="text" name="event-start-time" 
+        value="${isCreating ? '' : humanizeTaskDueDate(dateFrom, DateFormat.dateWithTime)}" required>
         &mdash;
         <label class="visually-hidden" for="event-end-time-${pointId}">To</label>
-        <input class="event__input  event__input--time" id="event-end-time-${pointId}" type="text" name="event-end-time" value="${humanizeTaskDueDate(dateTo, DATE_FORMAT.dateWithTime)}">
+        <input class="event__input  event__input--time" id="event-end-time-${pointId}" type="text" name="event-end-time" 
+        value="${isCreating ? '' : humanizeTaskDueDate(dateTo, DateFormat.dateWithTime)}" required>
       </div>
 
       <div class="event__field-group  event__field-group--price">
@@ -127,44 +131,43 @@ function createTripEditFormView (eventPoint, destination, allDestinations, offer
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-${pointId}" type="text" name="event-price" value="${basePrice}">
+        <input class="event__input  event__input--price" id="event-price-${pointId}" type="text" name="event-price" value="${isCreating ? '0' : basePrice}" required>
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">${id ? 'Delete' : 'Cancel'}</button>
-      ${id ?
+      <button class="event__reset-btn" type="reset">${isCreating ? 'Cancel' : 'Delete'}</button>
+      ${isCreating ? '' :
       (`<button class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
-      </button>`)
-      : ''}
+      </button>`)}
     </header>
     <section class="event__details">
       ${offersByType.length !== 0 ? createOffersListView(offersByType, selectedOffers) : ''}
-      ${destination ? createDestinationView(description, pictures) : ''}
+      ${destinationById ? createDestinationView(description, pictures) : ''}
     </form>
   </li>`
   );
 }
 
 export default class TripEditFormView extends AbstractStatefulView {
-  #destination = null;
   #allDestinations = null;
   #offers = null;
-  #selectedOffers = null;
   #onCloseClick = null;
   #onSubmitForm = null;
+  #handleDeleteClick = null;
   #datepickerDateTo = null;
   #datepickerDateFrom = null;
+  #editorMode = null;
 
-  constructor({eventPoint, destination, allDestinations, offers, selectedOffers, onCloseClick, onSubmitForm}) {
+  constructor({eventPoint, allDestinations, offers, onCloseClick, onSubmitForm, onDeleteClick, editorMode = EditTypes.EDITING}) {
     super();
     this._setState(TripEditFormView.parsePointToState(eventPoint));
-    this.#destination = destination;
     this.#allDestinations = allDestinations;
     this.#offers = offers;
-    this.#selectedOffers = selectedOffers || null;
     this.#onCloseClick = onCloseClick;
     this.#onSubmitForm = onSubmitForm;
+    this.#handleDeleteClick = onDeleteClick;
+    this.#editorMode = editorMode;
 
     this._restoreHandlers();
   }
@@ -186,7 +189,7 @@ export default class TripEditFormView extends AbstractStatefulView {
   }
 
   get template() {
-    return createTripEditFormView(this._state, this.#destination, this.#allDestinations, this.#offers, this.#selectedOffers);
+    return createTripEditFormView(this._state, this.#allDestinations, this.#offers, this.#editorMode);
   }
 
   #closeEditFrom = (evt) => {
@@ -197,6 +200,11 @@ export default class TripEditFormView extends AbstractStatefulView {
   #submitEditFrom = (evt) => {
     evt.preventDefault();
     this.#onSubmitForm(this._state);
+  };
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDeleteClick(this._state);
   };
 
   #handlerChangeEventType = (evt) => {
@@ -230,8 +238,12 @@ export default class TripEditFormView extends AbstractStatefulView {
   };
 
   _restoreHandlers() {
-    if (this._state.id) {
+    if (this.#editorMode === EditTypes.EDITING) {
       this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeEditFrom);
+      this.element.querySelector('.event__save-btn').addEventListener('click', this.#submitEditFrom);
+      this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
+    } else {
+      this.element.querySelector('.event__reset-btn').addEventListener('click', this.#closeEditFrom);
       this.element.querySelector('.event__save-btn').addEventListener('click', this.#submitEditFrom);
     }
 

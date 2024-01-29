@@ -1,5 +1,5 @@
-import {render} from '../framework/render.js';
-import {SortTypes, enabledSortType} from '../const.js';
+import {remove, render, replace} from '../framework/render.js';
+import {SortTypes, EnabledSortType} from '../const.js';
 import SortingView from '../view/sorting-view.js';
 
 export default class SortPresenter {
@@ -7,6 +7,7 @@ export default class SortPresenter {
   #sortTypes = [];
   #defaultSortType = null;
   #handleSortTypeChange = null;
+  #sortComponent = null;
 
   constructor({container, handleSortTypeChange, defaultSortType}) {
     this.#container = container;
@@ -14,18 +15,28 @@ export default class SortPresenter {
     this.#sortTypes = Object.values(SortTypes).map((type) => ({
       type,
       isChecked: type === this.#defaultSortType,
-      isDisabled: !enabledSortType[type],
+      isDisabled: !EnabledSortType[type],
     }));
     this.#handleSortTypeChange = handleSortTypeChange;
   }
 
   init() {
-    render(
-      new SortingView({
-        items: this.#sortTypes,
-        onItemChange: this.#handleSortTypeChange,
-      }),
-      this.#container,
-    );
+    const prevSortComponent = this.#sortComponent;
+
+    this.#sortComponent = new SortingView({
+      items: this.#sortTypes,
+      onItemChange: this.#handleSortTypeChange,
+    });
+
+    if(prevSortComponent) {
+      replace(this.#sortComponent, prevSortComponent);
+      remove(prevSortComponent);
+    } else {
+      render(this.#sortComponent, this.#container);
+    }
+  }
+
+  destroy() {
+    remove(this.#sortComponent);
   }
 }

@@ -1,7 +1,8 @@
 import TripEditFormView from '../view/trip-edit-form-view.js';
 import WayPointView from '../view/waypoint-view.js';
 import {remove, render, replace} from '../framework/render.js';
-import {Mode} from '../const.js';
+import {EditTypes, Mode, UpdateTypes, UserActions} from '../const.js';
+import { isMinorChange } from '../utils/point.js';
 
 export default class PointPresenter {
   #pointListContainer = null;
@@ -13,15 +14,13 @@ export default class PointPresenter {
   #handleDataChange = null;
   #mode = Mode.DEFAULT;
   #handleModeChange = null;
-  #allDestinations = null;
 
-  constructor({pointListContainer, destinationsModel, offersModel, onPointChange, onModeChange, allDestinations}) {
+  constructor({pointListContainer, destinationsModel, offersModel, onPointChange, onModeChange}) {
     this.#pointListContainer = pointListContainer;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
     this.#handleDataChange = onPointChange;
     this.#handleModeChange = onModeChange;
-    this.#allDestinations = allDestinations;
   }
 
   init(point) {
@@ -43,12 +42,12 @@ export default class PointPresenter {
 
     this.#editPointComponent = new TripEditFormView({
       eventPoint: this.#point,
-      destination: this.#destinationsModel.getDestinationById(point.destination),
-      allDestinations: this.#allDestinations,
-      selectedOffers: [...this.#offersModel.getOffersById(point.type, point.offers)],
+      allDestinations: this.#destinationsModel.destinations,
       offers: this.#offersModel.offers,
       onCloseClick: this.#pointCloseHandler,
       onSubmitForm: this.#pointSubmitHandler,
+      onDeleteClick: this.#handleDeleteClick,
+      editorMode: EditTypes.EDITING,
     });
 
     if (prevtWayPointComponent === null || prevtEditPointComponent === null) {
@@ -67,6 +66,14 @@ export default class PointPresenter {
 
     remove(prevtWayPointComponent);
     remove(prevtEditPointComponent);
+  }
+
+  get offers() {
+    return this.#offersModel.offers;
+  }
+
+  get destinations() {
+    return this.#destinationsModel.destinations;
   }
 
   destroy() {
@@ -111,14 +118,30 @@ export default class PointPresenter {
   };
 
   #pointSubmitHandler = (point) => {
+    const currentTypeChange = isMinorChange(point, this.#point) ? UpdateTypes.MINOR : UpdateTypes.PATCH;
     this.#replaceEditorToPoint();
-    this.#handleDataChange(point);
+    this.#handleDataChange(
+      UserActions.UPDATE_EVENT,
+      currentTypeChange,
+      point
+    );
+  };
+
+  #handleDeleteClick = (point) => {
+    this.#handleDataChange(
+      UserActions.DELETE_EVENT,
+      UpdateTypes.MINOR,
+      point,
+    );
   };
 
   #favoriteClickHandler = () => {
-    this.#handleDataChange({
-      ...this.#point,
-      isFavorite: !this.#point.isFavorite
-    });
+    this.#handleDataChange(
+      UserActions.UPDATE_EVENT,
+      UpdateTypes.PATCH,
+      {
+        ...this.#point,
+        isFavorite: !this.#point.isFavorite
+      });
   };
 }

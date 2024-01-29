@@ -39,6 +39,10 @@ function isPastPoint(point) {
   return dayjs().isAfter(dayjs(point.dateTo));
 }
 
+const isMinorChange = (pointA, pointB) => pointA.dateFrom !== pointB.dateFrom ||
+pointA.basePrice !== pointB.basePrice ||
+getTimeDifference(pointA.dateFrom, pointA.dateTo) !== getTimeDifference(pointB.dateFrom, pointB.dateTo);
+
 const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
 
 export {
@@ -47,5 +51,6 @@ export {
   isFuturePoint,
   isPresentPoint,
   isPastPoint,
+  isMinorChange,
   updateItem,
 };

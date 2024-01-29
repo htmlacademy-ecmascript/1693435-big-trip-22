@@ -5,7 +5,20 @@ function createNewEventButtonView() {
 }
 
 export default class NewEventButtonView extends AbstractView {
+  #handleAddNewPoint = null;
+
+  constructor ({onAddPointBtnClick}) {
+    super();
+    this.#handleAddNewPoint = onAddPointBtnClick;
+    this.element.addEventListener('click', this.#addNewPointHandler);
+  }
+
   get template() {
     return createNewEventButtonView();
   }
+
+  #addNewPointHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleAddNewPoint();
+  };
 }

@@ -7,14 +7,14 @@ const MSEC_IN_HOUR = MSEC_IN_SEC * SEC_IN_MINUTES * MIN_IN_HOUR;
 const MSEC_IN_DAY = MSEC_IN_HOUR * HOUR_IN_A_DAY;
 const PICTURE_URL = 'https://loremflickr.com/248/152?random=';
 
-const DATE_FORMAT = {
+const DateFormat = {
   hours: 'HH:mm',
   month: 'MMM D',
   date: 'YYYY-MM-DD',
   dateWithTime: 'YY/MM/DD HH:mm'
 };
 
-const POINT_TYPES = [
+const pointTypes = [
   'taxi',
   'bus',
   'train',
@@ -34,7 +34,7 @@ const DESCRIPTIONS = [
   'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.',
 ];
 
-const FilterType = {
+const FilterTypes = {
   EVERYTHING: 'everything',
   FUTURE: 'future',
   PRESENT: 'present',
@@ -49,7 +49,7 @@ const SortTypes = {
   OFFERS: 'offers',
 };
 
-const enabledSortType = {
+const EnabledSortType = {
   [SortTypes.DAY]: true,
   [SortTypes.EVENT]: false,
   [SortTypes.TIME]: true,
@@ -65,7 +65,7 @@ function getDefaultPoint() {
     destination: 0,
     isFavorite: false,
     offers: [],
-    type: POINT_TYPES[5],
+    type: pointTypes[5],
   });
 }
 
@@ -78,19 +78,47 @@ const Mode = {
   EDITING: 'EDITING',
 };
 
+const EditTypes = {
+  EDITING: 'EDITING',
+  CREATING: 'CREATING',
+};
+
+const UserActions = {
+  ADD_EVENT: 'ADD_EVENT',
+  UPDATE_EVENT: 'UPDATE_EVENT',
+  DELETE_EVENT: 'DELETE_EVENT'
+};
+
+const UpdateTypes = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+const EmptyListMessages = {
+  EVERYTHING: 'Click New Event to create your first point',
+  FUTURE: 'There are no future events now',
+  PRESENT: 'There are no present events now',
+  PAST: 'There are no past events now',
+};
+
 export {
   SEC_IN_MINUTES,
   HOUR_IN_A_DAY,
   MSEC_IN_HOUR,
   MSEC_IN_DAY,
   PICTURE_URL,
-  DATE_FORMAT,
-  POINT_TYPES,
+  DateFormat,
+  pointTypes,
   DESCRIPTIONS,
-  FilterType,
+  FilterTypes,
   SortTypes,
-  enabledSortType,
+  EnabledSortType,
   getDefaultPoint,
   сapitalizeTheFirstLetter,
-  Mode
+  Mode,
+  EditTypes,
+  UserActions,
+  UpdateTypes,
+  EmptyListMessages,
 };
