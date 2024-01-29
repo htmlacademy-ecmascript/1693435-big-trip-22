@@ -6,13 +6,21 @@ import OffersModel from './model/offers-model.js';
 import FiltersModel from './model/filters-model.js';
 import NewEventButtonPresenter from './presenter/new-event-button-presenter.js';
 import FiltersPresenter from './presenter/filters-presenter.js';
+import PointApiService from './service/point-api-service.js';
+import { AUTHORIZATION, SERVER_URL } from './const.js';
 
 const siteTripMainElement = document.querySelector('.trip-main');
 const bodyMainContainer = document.querySelector('.page-body__page-main');
 const bodyContainerElement = bodyMainContainer.querySelector('.page-body__container');
-const eventPointsModel = new EventPointsModel();
-const destinationsModel = new DestinationsModel();
-const offersModel = new OffersModel();
+
+const service = new PointApiService(SERVER_URL, AUTHORIZATION);
+const destinationsModel = new DestinationsModel(service);
+const offersModel = new OffersModel(service);
+const eventPointsModel = new EventPointsModel({
+  service,
+  destinationModel: destinationsModel,
+  offersModel: offersModel,
+});
 const filtersModel = new FiltersModel();
 
 const newEventButtonPresenter = new NewEventButtonPresenter({
@@ -29,9 +37,9 @@ const pointsListPresenter = new PointsListPresenter({
 });
 
 const filtersPresenter = new FiltersPresenter({
-  headerComponent: siteTripMainElement,
-  eventPointsModel: eventPointsModel,
-  filtersModel: filtersModel,
+  headerContainer: siteTripMainElement,
+  eventPointsModel,
+  filtersModel
 });
 
 const headerPresenter = new HeaderPresenter({
@@ -41,8 +49,10 @@ const headerPresenter = new HeaderPresenter({
 export default class BigTripApp {
   init() {
     headerPresenter.init();
-    filtersPresenter.init();
-    newEventButtonPresenter.init({onButtonClick: pointsListPresenter.addPointButtonClickHandler});
     pointsListPresenter.init();
+    eventPointsModel.init().finally(() => {
+      filtersPresenter.init();
+      newEventButtonPresenter.init({onButtonClick: pointsListPresenter.addPointButtonClickHandler});
+    });
   }
 }
