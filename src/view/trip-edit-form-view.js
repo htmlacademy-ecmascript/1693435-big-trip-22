@@ -142,7 +142,7 @@ function createTripEditFormView (state, allDestinations, offers, editorMode) {
       </button>`)}
     </header>
     <section class="event__details">
-      ${offersByType.length !== 0 ? createOffersListView(offersByType, selectedOffers) : ''}
+      ${offersByType ? createOffersListView(offersByType, selectedOffers) : ''}
       ${destinationById ? createDestinationView(description, pictures) : ''}
     </form>
   </li>`

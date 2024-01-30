@@ -58,7 +58,11 @@ export default class PointsListPresenter {
     this.#isCreating = true;
     this.#currentSortType = SortTypes.DAY;
     this.#filtersModel.set(UpdateTypes.MAJOR, FilterTypes.EVERYTHING);
+    this.#addPointButtonPresenter.disableButton();
     this.#addPointPresenter.init();
+    if (this.#emptyListComponent) {
+      remove(this.#emptyListComponent);
+    }
   };
 
   #addPointDestroyHandler = ({isCanceled}) => {
@@ -119,11 +123,20 @@ export default class PointsListPresenter {
   };
 
   #clearBoard = ({resetSortType = false} = {}) => {
-    this.#addPointPresenter.destroy({isCanceled: true});
     this.#clearEventPointsList();
-    this.#sortPresenter.destroy();
-    remove(this.#emptyListComponent);
-    remove(this.#loadingComponent);
+
+    if (this.#sortPresenter) {
+      this.#sortPresenter.destroy();
+    }
+
+    if (this.#emptyListComponent) {
+      remove(this.#emptyListComponent);
+    }
+
+    if (this.#loadingComponent) {
+      remove(this.#loadingComponent);
+    }
+
     if (resetSortType) {
       this.#currentSortType = SortTypes.DAY;
     }
@@ -194,17 +207,17 @@ export default class PointsListPresenter {
 
   #renderEvetsPointList() {
     this.#renderEventComponent();
+
     if (this.#isLoading) {
       this.#renderLoading();
       return;
     }
 
-    if (!this.points.length) {
-      this.#renderEmptyList();
-      return;
-    }
-
     this.#renderSort();
     this.#renderEventsListComponent();
+
+    if (!this.points.length) {
+      this.#renderEmptyList();
+    }
   }
 }
