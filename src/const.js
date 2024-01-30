@@ -5,7 +5,6 @@ const MSEC_IN_SEC = 1000;
 
 const MSEC_IN_HOUR = MSEC_IN_SEC * SEC_IN_MINUTES * MIN_IN_HOUR;
 const MSEC_IN_DAY = MSEC_IN_HOUR * HOUR_IN_A_DAY;
-const PICTURE_URL = 'https://loremflickr.com/248/152?random=';
 
 const DateFormat = {
   hours: 'HH:mm',
@@ -24,14 +23,6 @@ const pointTypes = [
   'check-in',
   'sightseeing',
   'restaurant',
-];
-
-const DESCRIPTIONS = [
-  'Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.',
-  'Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.',
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget.',
-  'Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra.',
-  'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.',
 ];
 
 const FilterTypes = {
@@ -93,6 +84,7 @@ const UpdateTypes = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT'
 };
 
 const EmptyListMessages = {
@@ -102,15 +94,29 @@ const EmptyListMessages = {
   PAST: 'There are no past events now',
 };
 
+const Method = {
+  GET: 'GET',
+  PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
+};
+
+const SourceUrl = {
+  POINTS: 'points',
+  OFFERS: 'offers',
+  DESTINATIONS: 'destinations',
+};
+
+const SERVER_URL = 'https://22.objects.htmlacademy.pro/big-trip';
+const AUTHORIZATION = 'Basic H2ZermkmPmthc8DuSTJh';
+
 export {
   SEC_IN_MINUTES,
   HOUR_IN_A_DAY,
   MSEC_IN_HOUR,
   MSEC_IN_DAY,
-  PICTURE_URL,
   DateFormat,
   pointTypes,
-  DESCRIPTIONS,
   FilterTypes,
   SortTypes,
   EnabledSortType,
@@ -121,4 +127,8 @@ export {
   UserActions,
   UpdateTypes,
   EmptyListMessages,
+  Method,
+  SourceUrl,
+  SERVER_URL,
+  AUTHORIZATION,
 };

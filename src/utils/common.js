@@ -1,11 +1,3 @@
-function getRandomArrayElement(items) {
-  return items[Math.floor(Math.random() * items.length)];
-}
-
-function getRandomInteger(maxRandomvalue) {
-  return Math.floor(Math.random() * maxRandomvalue);
-}
-
 const getElementByType = (elements, type) => elements.find((element) => element.type === type);
 
 function getElementById(elements, itemsId) {
@@ -17,4 +9,4 @@ function getElementById(elements, itemsId) {
 }
 
 
-export {getRandomArrayElement, getRandomInteger, getElementByType, getElementById};
+export {getElementByType, getElementById};

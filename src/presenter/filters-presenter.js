@@ -4,45 +4,58 @@ import {render, replace, remove} from '../framework/render.js';
 import {filter} from '../utils/filter.js';
 
 export default class FiltersPresenter {
-  #headerComponent = null;
+  #headerContainer = null;
   #eventPointsModel = null;
-  #filtersModel = null;
+  #filterModel = null;
   #filterComponent = null;
-  #filters = [];
 
-  constructor({headerComponent, eventPointsModel, filtersModel}) {
-    this.#headerComponent = headerComponent;
+  constructor({headerContainer, eventPointsModel, filtersModel}) {
+    this.#headerContainer = headerContainer;
     this.#eventPointsModel = eventPointsModel;
-    this.#filtersModel = filtersModel;
+    this.#filterModel = filtersModel;
+    this.#eventPointsModel.addObserver(this.#handleModeChange);
+    this.#filterModel.addObserver(this.#handleModeChange);
+  }
 
+  get filters() {
+    const eventPoints = this.#eventPointsModel.eventPoints;
 
-    // Помогите, пожалуйста, перериовывать фильтры, если унас открывается форма для создания точки,
-    // не поняла, как это сделать:(
-
-    this.#filters = Object.entries(filter).map(([filterType, filterPoints], index) => ({
-      type: filterType,
-      isChecked: index === 0,
-      isDisabled: !filterPoints(this.#eventPointsModel.eventPoints).length,
-    }));
+    return Object.entries(filter).map(
+      ([filterType, filterPoints]) => ({
+        type: filterType,
+        isChecked: filterType === this.#filterModel.filter,
+        isDisabled: !filterPoints(eventPoints).length
+      })
+    );
   }
 
   init() {
+    this.#renderFilters();
+  }
+
+  #renderFilters() {
+    const filters = this.filters;
     const prevFilterComponent = this.#filterComponent;
 
     this.#filterComponent = new FiltersView({
-      items: this.#filters,
-      onItemChange: this.#handleFilterTypeChange,
+      items: filters,
+      onItemChange: this.#handleFilterTypeChange
     });
 
-    if(prevFilterComponent) {
-      replace(this.#filterComponent, prevFilterComponent);
-      remove(prevFilterComponent);
-    } else {
-      render(this.#filterComponent, this.#headerComponent);
+    if (prevFilterComponent === null) {
+      render(this.#filterComponent, this.#headerContainer);
+      return;
     }
+
+    replace(this.#filterComponent, prevFilterComponent);
+    remove(prevFilterComponent);
   }
 
+  #handleModeChange = () => {
+    this.init();
+  };
+
   #handleFilterTypeChange = (filterType) => {
-    this.#filtersModel.set(UpdateTypes.MAJOR, filterType);
+    this.#filterModel.set(UpdateTypes.MAJOR, filterType);
   };
 }

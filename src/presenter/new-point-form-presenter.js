@@ -1,6 +1,7 @@
 import TripEditFormView from '../view/trip-edit-form-view.js';
 import {render, remove, RenderPosition} from '../framework/render.js';
 import {getDefaultPoint, UserActions, UpdateTypes, EditTypes} from '../const.js';
+import {nanoid} from 'nanoid';
 
 export default class NewPointFormPresenter {
   #tripEventContainer = null;
@@ -53,7 +54,7 @@ export default class NewPointFormPresenter {
     this.#handleDataChange(
       UserActions.ADD_EVENT,
       UpdateTypes.MINOR,
-      {...point},
+      {id: nanoid(), ...point},
     );
 
     this.destroy({isCanceled: false});

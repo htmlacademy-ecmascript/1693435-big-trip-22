@@ -131,7 +131,7 @@ function createTripEditFormView (state, allDestinations, offers, editorMode) {
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-${pointId}" type="text" name="event-price" value="${isCreating ? '0' : basePrice}" required>
+        <input class="event__input  event__input--price" id="event-price-${pointId}" type="number" min="0" name="event-price" value="${isCreating ? '0' : basePrice}" required>
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>

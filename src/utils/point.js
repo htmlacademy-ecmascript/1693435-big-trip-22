@@ -27,18 +27,6 @@ function getTimeDifference(start, end) {
   }
 }
 
-function isFuturePoint(point) {
-  return dayjs().isBefore(dayjs(point.dateFrom));
-}
-
-function isPresentPoint(point) {
-  return dayjs().isSameOrAfter(dayjs(point.dateFrom)) && dayjs().isSameOrBefore(dayjs(point.dateTo));
-}
-
-function isPastPoint(point) {
-  return dayjs().isAfter(dayjs(point.dateTo));
-}
-
 const isMinorChange = (pointA, pointB) => pointA.dateFrom !== pointB.dateFrom ||
 pointA.basePrice !== pointB.basePrice ||
 getTimeDifference(pointA.dateFrom, pointA.dateTo) !== getTimeDifference(pointB.dateFrom, pointB.dateTo);
@@ -48,9 +36,6 @@ const updateItem = (items, update) => items.map((item) => item.id === update.id 
 export {
   humanizeTaskDueDate,
   getTimeDifference,
-  isFuturePoint,
-  isPresentPoint,
-  isPastPoint,
   isMinorChange,
   updateItem,
 };
