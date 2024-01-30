@@ -13,6 +13,11 @@ const DateFormat = {
   dateWithTime: 'YY/MM/DD HH:mm'
 };
 
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000
+};
+
 const pointTypes = [
   'taxi',
   'bus',
@@ -116,6 +121,7 @@ export {
   MSEC_IN_HOUR,
   MSEC_IN_DAY,
   DateFormat,
+  TimeLimit,
   pointTypes,
   FilterTypes,
   SortTypes,

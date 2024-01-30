@@ -62,6 +62,7 @@ export default class PointPresenter {
 
     if (this.#mode === Mode.EDITING) {
       replace(this.#editPointComponent, prevtEditPointComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(prevtWayPointComponent);
@@ -85,6 +86,41 @@ export default class PointPresenter {
     if (this.#mode !== Mode.DEFAULT) {
       this.#replaceEditorToPoint();
     }
+  }
+
+  setSaving() {
+    if (this.#mode === Mode.EDITING) {
+      this.#editPointComponent.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  }
+
+  setDeleting() {
+    if (this.#mode === Mode.EDITING) {
+      this.#editPointComponent.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
+    }
+  }
+
+  setAborting() {
+    if (this.#mode === Mode.DEFAULT) {
+      this.#wayPointComponent.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#editPointComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#editPointComponent.shake(resetFormState);
   }
 
   #escKeyDownHandler = (evt) => {
