@@ -44,6 +44,13 @@ export default class PointsListPresenter {
     this.#offersModel = offersModel;
     this.#filtersModel = filtersModel;
     this.#addPointButtonPresenter = addPointButtonPresenter;
+    this.#addPointPresenter = new NewPointFormPresenter({
+      tripEventContainer: this.#tripEventsListComponent.element,
+      destinationsModel: this.#destinationsModel,
+      offersModel: this.#offersModel,
+      onDataChange: this.#handleViewAction,
+      onDestroy: this.#addPointDestroyHandler,
+    });
 
     this.#eventPointsModel.addObserver(this.#handleModelChange);
     this.#filtersModel.addObserver(this.#handleModelChange);
@@ -74,20 +81,16 @@ export default class PointsListPresenter {
     this.#isCreating = false;
     this.#addPointButtonPresenter.enableButton();
     if (!this.points.length && isCanceled) {
-      this.#clearBoard();
+      // this.#clearBoard();
+      if (this.#sortPresenter) {
+        this.#sortPresenter.destroy();
+      }
       this.#renderBoard();
     }
   };
 
   #renderBoard() {
     this.#destinations = [...this.#destinationsModel.destinations];
-    this.#addPointPresenter = new NewPointFormPresenter({
-      tripEventContainer: this.#tripEventsListComponent.element,
-      allDestinations: this.#destinations,
-      offersModel: this.#offersModel,
-      onDataChange: this.#handleViewAction,
-      onDestroy: this.#addPointDestroyHandler,
-    });
 
     this.#renderEvetsPointList();
   }
@@ -141,10 +144,15 @@ export default class PointsListPresenter {
         remove(this.#loadingComponent);
         this.#renderBoard();
         break;
+      case UpdateTypes.ERROR:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderEmptyList(UpdateTypes.ERROR);
     }
   };
 
   #clearBoard = ({resetSortType = false} = {}) => {
+    this.#addPointPresenter.destroy({isCanceled: true});
     this.#clearEventPointsList();
 
     if (this.#sortPresenter) {
@@ -187,8 +195,8 @@ export default class PointsListPresenter {
     render(this.#loadingComponent, this.#tripEventComponent.element, RenderPosition.AFTERBEGIN);
   }
 
-  #renderEmptyList() {
-    this.#emptyListComponent = new NoEventPointsView({filterType: this.#filtersModel.filter});
+  #renderEmptyList(type) {
+    this.#emptyListComponent = new NoEventPointsView({filterType: type});
     render(this.#emptyListComponent, this.#tripEventComponent.element);
   }
 
@@ -229,17 +237,18 @@ export default class PointsListPresenter {
 
   #renderEvetsPointList() {
     this.#renderEventComponent();
+    this.#renderEventsListComponent();
 
     if (this.#isLoading) {
       this.#renderLoading();
       return;
     }
 
-    this.#renderSort();
-    this.#renderEventsListComponent();
-
     if (!this.points.length) {
-      this.#renderEmptyList();
+      this.#renderEmptyList(this.#filtersModel.filter);
+      return;
     }
+
+    this.#renderSort();
   }
 }

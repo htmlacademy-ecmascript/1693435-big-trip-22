@@ -8,11 +8,11 @@ export default class NewPointFormPresenter {
   #newFormComponent = null;
   #handleDataChange = null;
   #handleDestroy = null;
-  #allDestinations = [];
+  #destinationsModel = null;
 
-  constructor({tripEventContainer, allDestinations, offersModel, onDataChange, onDestroy}) {
+  constructor({tripEventContainer, destinationsModel, offersModel, onDataChange, onDestroy}) {
     this.#tripEventContainer = tripEventContainer;
-    this.#allDestinations = allDestinations;
+    this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
     this.#handleDataChange = onDataChange;
     this.#handleDestroy = onDestroy;
@@ -25,7 +25,7 @@ export default class NewPointFormPresenter {
 
     this.#newFormComponent = new TripEditFormView({
       eventPoint: getDefaultPoint(),
-      allDestinations: this.#allDestinations,
+      allDestinations: this.#destinationsModel.destinations,
       offers: this.#offersModel.offers,
       onSubmitForm: this.#handleFormSubmit,
       onCloseClick: this.#handleDestroyClick,
@@ -74,8 +74,6 @@ export default class NewPointFormPresenter {
       UpdateTypes.MINOR,
       point,
     );
-
-    this.destroy({isCanceled: false});
   };
 
   #handleDestroyClick = () => {

@@ -1,4 +1,4 @@
-import {remove, render, replace} from '../framework/render.js';
+import {RenderPosition, remove, render, replace} from '../framework/render.js';
 import {SortTypes, EnabledSortType} from '../const.js';
 import SortingView from '../view/sorting-view.js';
 
@@ -32,7 +32,7 @@ export default class SortPresenter {
       replace(this.#sortComponent, prevSortComponent);
       remove(prevSortComponent);
     } else {
-      render(this.#sortComponent, this.#container);
+      render(this.#sortComponent, this.#container, RenderPosition.AFTERBEGIN);
     }
   }
 

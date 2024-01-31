@@ -18,15 +18,14 @@ export default class EventPointsModel extends Observable {
 
   async init() {
     try {
-      await this.#destinationModel.init();
-      await this.#offersModel.init();
+      await Promise.all([this.#destinationModel.init(), this.#offersModel.init()]);
       const points = await this.#pointApiService.points;
       this.#eventPoints = points.map(this.#adaptToClient);
+      this._notify(UpdateTypes.INIT);
     } catch(err) {
       this.#eventPoints = [];
+      this._notify(UpdateTypes.ERROR);
     }
-
-    this._notify(UpdateTypes.INIT);
   }
 
   get eventPoints() {

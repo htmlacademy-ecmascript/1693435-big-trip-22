@@ -1,8 +1,8 @@
 import TripEditFormView from '../view/trip-edit-form-view.js';
 import WayPointView from '../view/waypoint-view.js';
 import {remove, render, replace} from '../framework/render.js';
-import {EditTypes, Mode, UpdateTypes, UserActions} from '../const.js';
-import { isMinorChange } from '../utils/point.js';
+import {Mode, UpdateTypes, UserActions} from '../const.js';
+import {isMinorChange} from '../utils/point.js';
 
 export default class PointPresenter {
   #pointListContainer = null;
@@ -47,7 +47,6 @@ export default class PointPresenter {
       onCloseClick: this.#pointCloseHandler,
       onSubmitForm: this.#pointSubmitHandler,
       onDeleteClick: this.#handleDeleteClick,
-      editorMode: EditTypes.EDITING,
     });
 
     if (prevtWayPointComponent === null || prevtEditPointComponent === null) {
@@ -56,12 +55,11 @@ export default class PointPresenter {
     }
 
     if (this.#mode === Mode.DEFAULT) {
-      this.#editPointComponent.reset(this.#point);
       replace(this.#wayPointComponent, prevtWayPointComponent);
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#editPointComponent, prevtEditPointComponent);
+      replace(this.#wayPointComponent, prevtEditPointComponent);
       this.#mode = Mode.DEFAULT;
     }
 
@@ -84,6 +82,7 @@ export default class PointPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#editPointComponent.reset(this.#point);
       this.#replaceEditorToPoint();
     }
   }
@@ -140,22 +139,22 @@ export default class PointPresenter {
 
   #replaceEditorToPoint = () => {
     replace(this.#wayPointComponent, this.#editPointComponent);
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
     this.#mode = Mode.DEFAULT;
   };
 
   #pointEditHandler = () => {
     this.#replacePointToEditor();
+    document.addEventListener('keydown', this.#escKeyDownHandler);
   };
 
   #pointCloseHandler = () => {
     this.#editPointComponent.reset(this.#point);
     this.#replaceEditorToPoint();
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
   #pointSubmitHandler = (point) => {
     const currentTypeChange = isMinorChange(point, this.#point) ? UpdateTypes.MINOR : UpdateTypes.PATCH;
-    this.#replaceEditorToPoint();
     this.#handleDataChange(
       UserActions.UPDATE_EVENT,
       currentTypeChange,
