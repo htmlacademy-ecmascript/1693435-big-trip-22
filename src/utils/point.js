@@ -19,9 +19,15 @@ function getTimeDifference(start, end) {
   const diff = dayjs(end).diff(dayjs(start));
 
   if (diff >= MSEC_IN_DAY) {
-    const dayMoreThenMonth = Math.floor(dayjs.duration(diff).asDays());
+    const dayCount = Math.floor(dayjs.duration(diff).asDays());
     const hourAndMins = dayjs.duration(diff).format('HH[H] mm[M]');
-    const bigDateformate = `${dayMoreThenMonth}D ${hourAndMins}`;
+    let bigDateformate;
+
+    if (dayCount < 10) {
+      bigDateformate = `0${dayCount}D ${hourAndMins}`;
+    } else {
+      bigDateformate = `${dayCount}D ${hourAndMins}`;
+    }
 
     return bigDateformate;
   }
