@@ -141,11 +141,11 @@ function createTripEditFormView (state, allDestinations, offers, editorMode) {
       <div class="event__field-group  event__field-group--time">
         <label class="visually-hidden" for="event-start-time-${pointId}">From</label>
         <input class="event__input  event__input--time" id="event-start-time-${pointId}" type="text" name="event-start-time" 
-        value="${isCreating ? '' : humanizeTaskDueDate(dateFrom, DateFormat.dateWithTime)}" required>
+        value="${isCreating ? '' : humanizeTaskDueDate(dateFrom, DateFormat.DATE_WITH_TIME)}" required>
         &mdash;
         <label class="visually-hidden" for="event-end-time-${pointId}">To</label>
         <input class="event__input  event__input--time" id="event-end-time-${pointId}" type="text" name="event-end-time" 
-        value="${isCreating ? '' : humanizeTaskDueDate(dateTo, DateFormat.dateWithTime)}" required>
+        value="${isCreating ? '' : humanizeTaskDueDate(dateTo, DateFormat.DATE_WITH_TIME)}" required>
       </div>
 
       <div class="event__field-group  event__field-group--price">

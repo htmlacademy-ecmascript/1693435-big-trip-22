@@ -44,6 +44,9 @@ const filtersPresenter = new FiltersPresenter({
 
 const headerPresenter = new HeaderPresenter({
   headerParentContainer: siteTripMainElement,
+  eventPointsModel,
+  destinationsModel,
+  offersModel,
 });
 
 export default class BigTripApp {

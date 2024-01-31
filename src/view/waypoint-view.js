@@ -20,16 +20,16 @@ function createWayPointView (eventPoint, destination, offers) {
   return (
     `<li class="trip-events__item">
       <div class="event">
-        <time class="event__date" datetime="${humanizeTaskDueDate(dateFrom, DateFormat.date)}">${humanizeTaskDueDate(dateFrom, DateFormat.month)}</time>
+        <time class="event__date" datetime="${humanizeTaskDueDate(dateFrom, DateFormat.DATE)}">${humanizeTaskDueDate(dateFrom, DateFormat.MONTH)}</time>
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
         <h3 class="event__title">${type} ${he.encode(name)}</h3>
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="${dateFrom}">${humanizeTaskDueDate(dateFrom, DateFormat.hours)}</time>
+            <time class="event__start-time" datetime="${dateFrom}">${humanizeTaskDueDate(dateFrom, DateFormat.HOURS)}</time>
             &mdash;
-            <time class="event__end-time" datetime="${dateTo}">${humanizeTaskDueDate(dateTo, DateFormat.hours)}</time>
+            <time class="event__end-time" datetime="${dateTo}">${humanizeTaskDueDate(dateTo, DateFormat.HOURS)}</time>
           </p>
           <p class="event__duration">${getTimeDifference(dateFrom, dateTo)}</p>
         </div>
