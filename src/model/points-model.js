@@ -18,15 +18,14 @@ export default class EventPointsModel extends Observable {
 
   async init() {
     try {
-      await this.#destinationModel.init();
-      await this.#offersModel.init();
+      await Promise.all([this.#destinationModel.init(), this.#offersModel.init()]);
       const points = await this.#pointApiService.points;
       this.#eventPoints = points.map(this.#adaptToClient);
+      this._notify(UpdateTypes.INIT);
     } catch(err) {
       this.#eventPoints = [];
+      this._notify(UpdateTypes.ERROR);
     }
-
-    this._notify(UpdateTypes.INIT);
   }
 
   get eventPoints() {
@@ -50,14 +49,28 @@ export default class EventPointsModel extends Observable {
     }
   }
 
-  addPoint(updateType, newPoint) {
-    this.#eventPoints = [...this.#eventPoints, newPoint];
-    this._notify(updateType, newPoint);
+  async addPoint(updateType, point) {
+    try {
+      const response = await this.#pointApiService.addPoint(point);
+      const newPoint = this.#adaptToClient(response);
+      this.#eventPoints = [
+        newPoint,
+        ...this.#eventPoints
+      ];
+      this._notify(updateType, newPoint);
+    } catch (err) {
+      throw new Error('Can\'t add point');
+    }
   }
 
-  deletePoint(updateType, point) {
-    this.#eventPoints = this.#eventPoints.filter((item) => item.id !== point.id);
-    this._notify(updateType);
+  async deletePoint(updateType, point) {
+    try {
+      await this.#pointApiService.deletePoint(point);
+      this.#eventPoints = this.#eventPoints.filter((item) => item.id !== point.id);
+      this._notify(updateType);
+    } catch (err) {
+      throw new Error('Can\'t delete point');
+    }
   }
 
   #adaptToClient(point) {

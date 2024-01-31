@@ -59,33 +59,55 @@ function destinationPhotosView({src, description}) {
   return `<img class="event__photo" src="${src}" alt="${description}">`;
 }
 
-function createDestinationView(description, pictures) {
-  if (pictures.length !== 0) {
-    return (
-      `<section class="event__section  event__section--destination">
-        <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">${description}</p>
-  
-        <div class="event__photos-container">
-          <div class="event__photos-tape">
-            ${pictures.map((picture) => destinationPhotosView(picture)).join('')}
-          </div>
-        </div>
-      </section>`
-    );
-  }
+function createDestinationView(destination, isDestination) {
+  return isDestination ?
+    `<section class="event__section  event__section--destination">
+      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+      <p class="event__destination-description">${destination.description}</p>
 
-  return '';
+      ${destination?.pictures.length > 0 ?
+    `<div class="event__photos-container">
+      <div class="event__photos-tape">
+        ${destination.pictures.map((picture) => destinationPhotosView(picture)).join('')}
+      </div>
+    </div>` : ''}
+    </section>` : '<p class="event__destination-description">No pictures destination description</p>';
 }
 
 function createTripEditFormView (state, allDestinations, offers, editorMode) {
-  const {id, type, dateFrom, dateTo, basePrice, destination, offers: selectedOffers} = state;
+  const {
+    id,
+    type,
+    dateFrom,
+    dateTo,
+    basePrice,
+    destination,
+    offers: selectedOffers,
+    isDisabled,
+    isSaving,
+    isDeleting
+  } = state;
+
   const pointId = id || 0;
   const destinationById = getElementById(allDestinations, destination);
-  const {name, description, pictures} = destinationById || {};
+  const {name} = destinationById || {};
   const destinationName = name || '';
   const isCreating = editorMode === EditTypes.CREATING;
   const offersByType = getElementByType(offers, type);
+
+  let buttonText;
+  if (isCreating) {
+    buttonText = 'Cancel';
+  } else if (isDeleting) {
+    buttonText = 'Deleting...';
+  } else {
+    buttonText = 'Delete';
+  }
+
+  const isDestination = destinationById?.pictures.length > 0 || destinationById?.description.trim().length > 0;
+
+  // console.log(destinationById);
+  // console.log(destination);
 
   return (
     `<li class="trip-events__item">
@@ -131,19 +153,19 @@ function createTripEditFormView (state, allDestinations, offers, editorMode) {
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-${pointId}" type="number" min="0" name="event-price" value="${isCreating ? '0' : basePrice}" required>
+        <input class="event__input  event__input--price" id="event-price-${pointId}" type="number" min="0" name="event-price" value="${basePrice}" required>
       </div>
 
-      <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">${isCreating ? 'Cancel' : 'Delete'}</button>
+      <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'saving...' : 'save'}</button>
+      <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${buttonText}</button>
       ${isCreating ? '' :
       (`<button class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
       </button>`)}
     </header>
     <section class="event__details">
-      ${offersByType.length !== 0 ? createOffersListView(offersByType, selectedOffers) : ''}
-      ${destinationById ? createDestinationView(description, pictures) : ''}
+      ${offersByType ? createOffersListView(offersByType, selectedOffers) : ''}
+      ${createDestinationView(destinationById, isDestination)}
     </form>
   </li>`
   );
@@ -172,7 +194,7 @@ export default class TripEditFormView extends AbstractStatefulView {
     this._restoreHandlers();
   }
 
-  reset = (point) => this.updateElement(point);
+  reset = (point) => this.updateElement(TripEditFormView.parsePointToState(point));
 
   removeElement() {
     super.removeElement();
@@ -300,11 +322,20 @@ export default class TripEditFormView extends AbstractStatefulView {
   }
 
   static parsePointToState(eventPoint) {
-    return {...eventPoint};
+    return {
+      ...eventPoint,
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
+    };
   }
 
   static parseStateToPoint(state) {
     const eventPoint = {...state};
+
+    delete eventPoint.isDisabled;
+    delete eventPoint.isSaving;
+    delete eventPoint.isDeleting;
 
     return eventPoint;
   }

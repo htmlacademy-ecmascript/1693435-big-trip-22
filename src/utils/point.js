@@ -2,10 +2,12 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration.js';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore.js';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import dayOfYear from 'dayjs/plugin/dayOfYear';
 import {MSEC_IN_HOUR, MSEC_IN_DAY} from '../const.js';
 dayjs.extend(duration);
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
+dayjs.extend(dayOfYear);
 
 function humanizeTaskDueDate(dueDate, format) {
   return dueDate ? dayjs(dueDate).format(format) : '';
@@ -15,7 +17,11 @@ function getTimeDifference(start, end) {
   const diff = dayjs(end).diff(dayjs(start));
 
   if (diff >= MSEC_IN_DAY) {
-    return dayjs.duration(diff).format('DD[D] HH[H] mm[M]');
+    const dayMoreThenMonth = Math.floor(dayjs.duration(diff).asDays());
+    const hourAndMins = dayjs.duration(diff).format('HH[H] mm[M]');
+    const bigDateformate = `${dayMoreThenMonth}D ${hourAndMins}`;
+
+    return bigDateformate;
   }
 
   if (diff >= MSEC_IN_HOUR) {

@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import {SortTypes} from '../const.js';
 
-const getPointsByDate = (pointA, pointB) => dayjs(pointB.dateFrom).diff(dayjs(pointA.dateFrom));
+const getPointsByDate = (pointA, pointB) => dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
 
 const getPointsByTime = (pointA, pointB) => {
   const eventADuration = dayjs(pointA.dateTo).diff(dayjs(pointA.dateFrom));

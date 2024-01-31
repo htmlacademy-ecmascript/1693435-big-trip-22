@@ -1,24 +1,14 @@
-import {UpdateTypes} from '../const.js';
-import Observable from '../framework/observable.js';
-
-export default class OffersModel extends Observable {
+export default class OffersModel {
   #offers = [];
   #pointApiService = null;
 
   constructor(service) {
-    super();
-
     this.#pointApiService = service;
   }
 
   async init() {
-    try {
-      this.#offers = await this.#pointApiService.offers;
-    } catch(err) {
-      this.#offers = [];
-    }
-
-    this._notify(UpdateTypes.INIT);
+    this.#offers = await this.#pointApiService.offers;
+    return this.#offers;
   }
 
   get offers() {

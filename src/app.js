@@ -1,5 +1,5 @@
-import PointsListPresenter from './presenter/points-list-prsenter.js';
-import HeaderPresenter from './presenter/header-container-prsenter.js';
+import PointsListPresenter from './presenter/points-list-presenter.js';
+import HeaderPresenter from './presenter/header-container-presenter.js';
 import EventPointsModel from './model/points-model.js';
 import DestinationsModel from './model/destination-model.js';
 import OffersModel from './model/offers-model.js';

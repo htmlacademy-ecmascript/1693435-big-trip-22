@@ -13,6 +13,11 @@ const DateFormat = {
   dateWithTime: 'YY/MM/DD HH:mm'
 };
 
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000
+};
+
 const pointTypes = [
   'taxi',
   'bus',
@@ -84,7 +89,8 @@ const UpdateTypes = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
-  INIT: 'INIT'
+  INIT: 'INIT',
+  ERROR: 'ERROR'
 };
 
 const EmptyListMessages = {
@@ -92,6 +98,7 @@ const EmptyListMessages = {
   FUTURE: 'There are no future events now',
   PRESENT: 'There are no present events now',
   PAST: 'There are no past events now',
+  ERROR: 'Failed to load latest route information',
 };
 
 const Method = {
@@ -116,6 +123,7 @@ export {
   MSEC_IN_HOUR,
   MSEC_IN_DAY,
   DateFormat,
+  TimeLimit,
   pointTypes,
   FilterTypes,
   SortTypes,
