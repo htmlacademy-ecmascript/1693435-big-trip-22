@@ -7,10 +7,11 @@ const MSEC_IN_HOUR = MSEC_IN_SEC * SEC_IN_MINUTES * MIN_IN_HOUR;
 const MSEC_IN_DAY = MSEC_IN_HOUR * HOUR_IN_A_DAY;
 
 const DateFormat = {
-  hours: 'HH:mm',
-  month: 'MMM D',
-  date: 'YYYY-MM-DD',
-  dateWithTime: 'YY/MM/DD HH:mm'
+  HOURS: 'HH:mm',
+  MONTH: 'MMM D',
+  DATE: 'YYYY-MM-DD',
+  DATE_WITH_TIME: 'YY/MM/DD HH:mm',
+  HEADER_DATE_FORMAT: 'D MMM',
 };
 
 const TimeLimit = {

@@ -1,23 +1,34 @@
 import AbstractView from '../framework/view/abstract-view.js';
+import {humanizeHeaderEventDate} from '../utils/point.js';
 
-function createHeaderTripInfoView() {
+function createHeaderTripInfoView(tripRoute, eventDate, totalPrice) {
   return (
     `<section class="trip-main__trip-info  trip-info">
       <div class="trip-info__main">
-        <h1 class="trip-info__title">Amsterdam &mdash; Chamonix &mdash; Geneva</h1>
-
-        <p class="trip-info__dates">18&nbsp;&mdash;&nbsp;20 mar</p>
+        <h1 class="trip-info__title">${tripRoute}</h1>
+        <p class="trip-info__dates">${humanizeHeaderEventDate(eventDate.startDate)}&nbsp;&mdash;&nbsp;${humanizeHeaderEventDate(eventDate.endDate)}</p>
       </div>
-
       <p class="trip-info__cost">
-        Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>
+        Total: &euro;&nbsp;<span class="trip-info__cost-value">${totalPrice}</span>
       </p>
     </section>`
   );
 }
 
 export default class HeaderTripInfoView extends AbstractView {
-  get template() {
-    return createHeaderTripInfoView();
+  #eventDate = {};
+  #totalPrice = 0;
+  #tripRoute = '';
+
+  constructor({tripRoute, eventDate, totalPrice}) {
+    super();
+    this.#tripRoute = tripRoute;
+    this.#eventDate = eventDate;
+    this.#totalPrice = totalPrice;
   }
+
+  get template() {
+    return createHeaderTripInfoView(this.#tripRoute, this.#eventDate, this.#totalPrice);
+  }
+
 }

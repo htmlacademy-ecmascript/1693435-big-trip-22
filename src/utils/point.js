@@ -3,7 +3,7 @@ import duration from 'dayjs/plugin/duration.js';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore.js';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import dayOfYear from 'dayjs/plugin/dayOfYear';
-import {MSEC_IN_HOUR, MSEC_IN_DAY} from '../const.js';
+import {MSEC_IN_HOUR, MSEC_IN_DAY, DateFormat} from '../const.js';
 dayjs.extend(duration);
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
@@ -13,13 +13,21 @@ function humanizeTaskDueDate(dueDate, format) {
   return dueDate ? dayjs(dueDate).format(format) : '';
 }
 
+const humanizeHeaderEventDate = (eventDate) => eventDate ? dayjs(eventDate).format(DateFormat.HEADER_DATE_FORMAT) : '';
+
 function getTimeDifference(start, end) {
   const diff = dayjs(end).diff(dayjs(start));
 
   if (diff >= MSEC_IN_DAY) {
-    const dayMoreThenMonth = Math.floor(dayjs.duration(diff).asDays());
+    const dayCount = Math.floor(dayjs.duration(diff).asDays());
     const hourAndMins = dayjs.duration(diff).format('HH[H] mm[M]');
-    const bigDateformate = `${dayMoreThenMonth}D ${hourAndMins}`;
+    let bigDateformate;
+
+    if (dayCount < 10) {
+      bigDateformate = `0${dayCount}D ${hourAndMins}`;
+    } else {
+      bigDateformate = `${dayCount}D ${hourAndMins}`;
+    }
 
     return bigDateformate;
   }
@@ -44,4 +52,5 @@ export {
   getTimeDifference,
   isMinorChange,
   updateItem,
+  humanizeHeaderEventDate,
 };

@@ -74,6 +74,14 @@ function createDestinationView(destination, isDestination) {
     </section>` : '<p class="event__destination-description">No pictures destination description</p>';
 }
 
+function createButtonTemplate(isCreating, isDisabled, isDeleting) {
+  if (isCreating) {
+    return '<button class="event__reset-btn" type="reset">Cancel</button>';
+  }
+
+  return `<button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${isDeleting ? 'Deleting...' : 'Delete'}</button>`;
+}
+
 function createTripEditFormView (state, allDestinations, offers, editorMode) {
   const {
     id,
@@ -95,19 +103,7 @@ function createTripEditFormView (state, allDestinations, offers, editorMode) {
   const isCreating = editorMode === EditTypes.CREATING;
   const offersByType = getElementByType(offers, type);
 
-  let buttonText;
-  if (isCreating) {
-    buttonText = 'Cancel';
-  } else if (isDeleting) {
-    buttonText = 'Deleting...';
-  } else {
-    buttonText = 'Delete';
-  }
-
   const isDestination = destinationById?.pictures.length > 0 || destinationById?.description.trim().length > 0;
-
-  // console.log(destinationById);
-  // console.log(destination);
 
   return (
     `<li class="trip-events__item">
@@ -141,11 +137,11 @@ function createTripEditFormView (state, allDestinations, offers, editorMode) {
       <div class="event__field-group  event__field-group--time">
         <label class="visually-hidden" for="event-start-time-${pointId}">From</label>
         <input class="event__input  event__input--time" id="event-start-time-${pointId}" type="text" name="event-start-time" 
-        value="${isCreating ? '' : humanizeTaskDueDate(dateFrom, DateFormat.dateWithTime)}" required>
+        value="${isCreating ? '' : humanizeTaskDueDate(dateFrom, DateFormat.DATE_WITH_TIME)}" required>
         &mdash;
         <label class="visually-hidden" for="event-end-time-${pointId}">To</label>
         <input class="event__input  event__input--time" id="event-end-time-${pointId}" type="text" name="event-end-time" 
-        value="${isCreating ? '' : humanizeTaskDueDate(dateTo, DateFormat.dateWithTime)}" required>
+        value="${isCreating ? '' : humanizeTaskDueDate(dateTo, DateFormat.DATE_WITH_TIME)}" required>
       </div>
 
       <div class="event__field-group  event__field-group--price">
@@ -157,7 +153,7 @@ function createTripEditFormView (state, allDestinations, offers, editorMode) {
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'saving...' : 'save'}</button>
-      <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${buttonText}</button>
+      ${createButtonTemplate(isCreating, isDisabled, isDeleting)}
       ${isCreating ? '' :
       (`<button class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
