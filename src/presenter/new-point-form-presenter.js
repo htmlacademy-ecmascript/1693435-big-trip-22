@@ -50,6 +50,10 @@ export default class NewPointFormPresenter {
   }
 
   setSaving() {
+    if (!this.#newFormComponent) {
+      return;
+    }
+
     this.#newFormComponent.updateElement({
       isDisabled: true,
       isSaving: true,
