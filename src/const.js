@@ -6,6 +6,9 @@ const MSEC_IN_SEC = 1000;
 const MSEC_IN_HOUR = MSEC_IN_SEC * SEC_IN_MINUTES * MIN_IN_HOUR;
 const MSEC_IN_DAY = MSEC_IN_HOUR * HOUR_IN_A_DAY;
 
+const SERVER_URL = 'https://22.objects.htmlacademy.pro/big-trip';
+const AUTHORIZATION = 'Basic H2ZermkmPmthc8DuSTJh';
+
 const DateFormat = {
   HOURS: 'HH:mm',
   MONTH: 'MMM D',
@@ -54,22 +57,6 @@ const EnabledSortType = {
   [SortTypes.OFFERS]: false,
 };
 
-function getDefaultPoint() {
-  return ({
-    basePrice: 0,
-    dateFrom: '',
-    dateTo: '',
-    destination: 0,
-    isFavorite: false,
-    offers: [],
-    type: pointTypes[5],
-  });
-}
-
-function сapitalizeTheFirstLetter(word) {
-  return word[0].toUpperCase() + word.slice(1);
-}
-
 const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING',
@@ -115,22 +102,31 @@ const SourceUrl = {
   DESTINATIONS: 'destinations',
 };
 
-const SERVER_URL = 'https://22.objects.htmlacademy.pro/big-trip';
-const AUTHORIZATION = 'Basic H2ZermkmPmthc8DuSTJh';
+function getDefaultPoint() {
+  return ({
+    basePrice: 0,
+    dateFrom: '',
+    dateTo: '',
+    destination: 0,
+    isFavorite: false,
+    offers: [],
+    type: pointTypes[5],
+  });
+}
 
 export {
   SEC_IN_MINUTES,
   HOUR_IN_A_DAY,
   MSEC_IN_HOUR,
   MSEC_IN_DAY,
+  SERVER_URL,
+  AUTHORIZATION,
   DateFormat,
   TimeLimit,
   pointTypes,
   FilterTypes,
   SortTypes,
   EnabledSortType,
-  getDefaultPoint,
-  сapitalizeTheFirstLetter,
   Mode,
   EditTypes,
   UserActions,
@@ -138,6 +134,5 @@ export {
   EmptyListMessages,
   Method,
   SourceUrl,
-  SERVER_URL,
-  AUTHORIZATION,
+  getDefaultPoint,
 };

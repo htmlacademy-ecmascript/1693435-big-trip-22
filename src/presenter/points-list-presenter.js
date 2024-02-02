@@ -13,7 +13,7 @@ import {RenderPosition, remove, render} from '../framework/render.js';
 
 export default class PointsListPresenter {
   #tripEventContainer = null;
-  #eventPointsModel = null;
+  #pointsModel = null;
   #destinationsModel = null;
   #offersModel = null;
   #filtersModel = null;
@@ -37,9 +37,9 @@ export default class PointsListPresenter {
 
   #destinations = [];
 
-  constructor({tripEventContainer, eventPointsModel, destinationsModel, offersModel, filtersModel, addPointButtonPresenter}) {
+  constructor({tripEventContainer, pointsModel, destinationsModel, offersModel, filtersModel, addPointButtonPresenter}) {
     this.#tripEventContainer = tripEventContainer;
-    this.#eventPointsModel = eventPointsModel;
+    this.#pointsModel = pointsModel;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
     this.#filtersModel = filtersModel;
@@ -52,13 +52,13 @@ export default class PointsListPresenter {
       onDestroy: this.#addPointDestroyHandler,
     });
 
-    this.#eventPointsModel.addObserver(this.#handleModelChange);
+    this.#pointsModel.addObserver(this.#handleModelChange);
     this.#filtersModel.addObserver(this.#handleModelChange);
   }
 
   get points() {
     const filterType = this.#filtersModel.filter;
-    const filteredPoints = filter[filterType](this.#eventPointsModel.eventPoints);
+    const filteredPoints = filter[filterType](this.#pointsModel.eventPoints);
     return sorting[this.#currentSortType](filteredPoints);
   }
 
@@ -101,7 +101,7 @@ export default class PointsListPresenter {
       case UserActions.ADD_EVENT:
         this.#addPointPresenter.setSaving();
         try {
-          await this.#eventPointsModel.addPoint(updateType, updatePoint);
+          await this.#pointsModel.addPoint(updateType, updatePoint);
         } catch (error) {
           this.#addPointPresenter.setAborting();
         }
@@ -109,7 +109,7 @@ export default class PointsListPresenter {
       case UserActions.UPDATE_EVENT:
         this.#pointsPresenter.get(updatePoint.id).setSaving();
         try {
-          await this.#eventPointsModel.updatePoint(updateType, updatePoint);
+          await this.#pointsModel.updatePoint(updateType, updatePoint);
         } catch (error) {
           this.#pointsPresenter.get(updatePoint.id).setAborting();
         }
@@ -117,7 +117,7 @@ export default class PointsListPresenter {
       case UserActions.DELETE_EVENT:
         this.#pointsPresenter.get(updatePoint.id).setDeleting();
         try {
-          await this.#eventPointsModel.deletePoint(updateType, updatePoint);
+          await this.#pointsModel.deletePoint(updateType, updatePoint);
         } catch (error) {
           this.#pointsPresenter.get(updatePoint.id).setAborting();
         }

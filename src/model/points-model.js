@@ -2,7 +2,7 @@ import Observable from '../framework/observable.js';
 import {updateItem} from '../utils/point.js';
 import {UpdateTypes} from '../const.js';
 
-export default class EventPointsModel extends Observable {
+export default class PointsModel extends Observable {
   #eventPoints = [];
   #pointApiService = null;
   #destinationModel = null;

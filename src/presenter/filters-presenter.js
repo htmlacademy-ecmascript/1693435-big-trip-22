@@ -5,20 +5,20 @@ import {filter} from '../utils/filter.js';
 
 export default class FiltersPresenter {
   #headerContainer = null;
-  #eventPointsModel = null;
+  #pointsModel = null;
   #filterModel = null;
   #filterComponent = null;
 
-  constructor({headerContainer, eventPointsModel, filtersModel}) {
+  constructor({headerContainer, pointsModel, filtersModel}) {
     this.#headerContainer = headerContainer;
-    this.#eventPointsModel = eventPointsModel;
+    this.#pointsModel = pointsModel;
     this.#filterModel = filtersModel;
-    this.#eventPointsModel.addObserver(this.#handleModeChange);
+    this.#pointsModel.addObserver(this.#handleModeChange);
     this.#filterModel.addObserver(this.#handleModeChange);
   }
 
   get filters() {
-    const eventPoints = this.#eventPointsModel.eventPoints;
+    const eventPoints = this.#pointsModel.eventPoints;
 
     return Object.entries(filter).map(
       ([filterType, filterPoints]) => ({
