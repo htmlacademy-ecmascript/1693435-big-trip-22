@@ -147,6 +147,7 @@ export default class PointsListPresenter {
       case UpdateTypes.ERROR:
         this.#isLoading = false;
         remove(this.#loadingComponent);
+        this.#addPointButtonPresenter.disableButton();
         this.#renderEmptyList(UpdateTypes.ERROR);
     }
   };
