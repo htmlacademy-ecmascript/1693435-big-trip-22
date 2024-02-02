@@ -6,19 +6,19 @@ import {RenderPosition, render, replace, remove} from '../framework/render.js';
 export default class HeaderPresenter {
   #headerParentContainer = null;
   #tripHeaderInfoComponent = null;
-  #eventPointsModel = null;
+  #pointsModel = null;
   #destinationsModel = null;
   #offersModel = null;
   #offers = [];
   #destinations = [];
 
-  constructor({headerParentContainer, eventPointsModel, offersModel, destinationsModel}) {
+  constructor({headerParentContainer, pointsModel, offersModel, destinationsModel}) {
     this.#headerParentContainer = headerParentContainer;
 
-    this.#eventPointsModel = eventPointsModel;
+    this.#pointsModel = pointsModel;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
-    this.#eventPointsModel.addObserver(this.#handleModeChange);
+    this.#pointsModel.addObserver(this.#handleModeChange);
   }
 
   init() {
@@ -28,7 +28,7 @@ export default class HeaderPresenter {
   #renderHeaderTripInfo(){
     this.#offers = this.#offersModel.offers;
     this.#destinations = this.#destinationsModel.destinations;
-    const eventPoints = sorting[SortTypes.DAY](this.#eventPointsModel.eventPoints);
+    const eventPoints = sorting[SortTypes.DAY](this.#pointsModel.eventPoints);
 
     if (eventPoints.length) {
       const prevHeaderInfoComponent = this.#tripHeaderInfoComponent;
